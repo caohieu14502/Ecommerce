@@ -9,12 +9,19 @@ import { createMaterialBottomTabNavigator } from '@react-navigation/material-bot
 import ProductDetails from "./components/Product/ProductDetails";
 import CardItem from "./components/Share/CardItem";
 import Store from "./components/Store/Store";
+import Login from './components/User/Login';
+import MyUserReducer from './reducers/MyUserReducer';
+import MyContext from './configs/MyContext';
+import Logout from './components/User/Logout';
+import User from './components/User/User';
 
 const Tab = createMaterialBottomTabNavigator();
 
 const App = () => {
+    const [user, dispatch] = useReducer(MyUserReducer, null)
     return (
         <SafeAreaProvider>
+            <MyContext.Provider value={[user, dispatch]}>
             <NavigationContainer>
                 <Tab.Navigator initialRouteName={Home}
                     shifting={true}
@@ -23,6 +30,16 @@ const App = () => {
                     inactiveColor="#3e2465"
                     barStyle={{ backgroundColor: '#694fad' }}
                 >
+                    {user===null?<>
+                        <Tab.Screen name='Login' component={Login} options={{title: "Login"}}/>
+                        
+                    </>:<>
+                        {/* Profile */}
+                        <Tab.Screen name="User" component={User} options={{title: user.username}}/>
+                        <Tab.Screen name="Logout" component={Logout} />
+                        {/* options={{drawerItemStyle: {display: "none"}}} */}
+                    </>}
+
                     <Tab.Screen name="Home" component={Home} options={{
                         // tabBarIcon: () => {
                         //     <Image source={require('./assets/icon.png')} />
@@ -40,9 +57,10 @@ const App = () => {
                     <Tab.Screen name="CardItem" component={CardItem} options={{ title: "Chi tiết bài học", drawerItemStyle: { display: "none" } }} />
                     <Tab.Screen name="ProductDetails" component={ProductDetails} options={{ title: "Chi tiết bài học", tabBarVisible: false, }} />
                     <Tab.Screen name="Store" component={Store} options={{ title: "Chi tiết bài học", tabBarVisible: false, }} />
-
+                    
                 </Tab.Navigator>
             </NavigationContainer>
+            </MyContext.Provider>
         </SafeAreaProvider>
     );
 };
