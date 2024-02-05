@@ -1,0 +1,118 @@
+{% extends 'admin/base_site.html' %}
+
+{% block content %}
+<link href="/static/css/style.css" media="all" rel="stylesheet">
+
+<div>
+    <div class="d-flex justify-content-center">
+        <div class="m-5 dashboard">Tổng số sản phẩm của sàn: {{ count_product}}</div>
+        <div class="m-5 dashboard" style="border-left: 5px solid red;">Tổng số thể loại của sàn: {{count_category}}
+        </div>
+    </div>
+    <div class="d-flex align-self-stretch" style="justify-content: space-evenly;">
+        <div class="m-5 dashboard" style="border-left: 5px solid red;">
+            <div>
+                <h2 class="text-center py-2">Số lượng sản phẩm theo thể loại</h2>
+                <canvas class="p-4" id="chartStatsDate"></canvas>
+            </div>
+        </div>
+        <div class="m-5 dashboard">
+            <div>
+                <h2 class="text-center py-2">Doanh thu của các cửa hàng</h2>
+                <canvas id="lineChartStore"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    let labels = [];
+    let data = [];
+    let colors = [];
+    let borderColors = [];
+
+    let labels1 = [];
+    let data1 = [];
+    let colors1 = [];
+    let borderColors1 = [];
+
+    let r, g, b;
+
+    {% for c in stats_count_products %}
+        labels.push('{{c.name}}');
+        data.push({{c.count}});
+
+        r = Math.floor(Math.random() * 256);
+        g = Math.floor(Math.random() * 256);
+        b = Math.floor(Math.random() * 256);
+
+        colors.push('rgba(' + r + ',' + g + ',' + b + ',0.5)');
+        borderColors.push('rgba(' + r + ',' + g + ',' + b + ',1)');
+    {% endfor %}
+
+
+    {% for c in stats_revenue_store %}
+        labels1.push('{{c.name}}');
+        data1.push({{c.total_price}});
+        r = Math.floor(Math.random() * 256);
+        g = Math.floor(Math.random() * 256);
+        b = Math.floor(Math.random() * 256);
+        colors1.push('rgba(' + r + ',' + g + ',' + b + ',0.5)');
+        borderColors1.push('rgba(' + r + ',' + g + ',' + b + ',1)');
+    {% endfor %}
+
+
+    window.onload = function () {
+        const ctx = document.getElementById('chartStatsDate');
+        loadChart(ctx, labels, data, 'doughnut', colors, borderColors);
+        let ctx1 = document.getElementById('lineChartStore');
+        loadChartStore(ctx1, labels1, data1, 'line', colors1, borderColors1)
+    };
+
+ function loadChartStore(ctx1, labels1, data1, type, colors1, borderColors1) {
+        const chartProduct = new Chart(ctx1, {
+            type: type,
+            data: {
+                labels: labels1,
+                datasets: [{
+                        label: 'Thống kê doanh thu từng cửa hàng',
+                        data: data1,
+                        backgroundColor: colors1,
+                        borderColor: borderColors1,
+                        borderWidth: 1,
+                        fill: false,
+                        tension: 0.5
+                    }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        stacked: true
+                    }
+                }
+            }
+        });
+    }
+
+    function loadChart(ctx, labels, data, type, colors, borderColors) {
+    const chartProduct = new Chart(ctx, {
+        type: type,
+        data: {
+            labels: labels,
+            datasets: [{
+                    label: 'Số lượng sản phẩm theo thể loại',
+                    data: data,
+                    backgroundColor: colors,
+                    borderColor: borderColors,
+                    borderWidth: 1
+                }]
+        }
+    });
+}
+
+</script>
+{% endblock %}

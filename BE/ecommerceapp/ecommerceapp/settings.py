@@ -17,7 +17,6 @@ import pymysql
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
@@ -27,11 +26,21 @@ SECRET_KEY = 'django-insecure-egf+7kwoh2doyf9)7i$47l8tlupe$8ze5rowp7kwz5=#8h+rlu
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
-
 # Application definition
+CORS_ORIGIN_ALLOW_ALL = True
 
+ALLOWED_HOSTS = [
+    'http://192.168.1.12:8081', '192.168.1.12'
+]
+
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+]
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -46,6 +55,7 @@ INSTALLED_APPS = [
     'drf_yasg',
     'cloudinary',
     'oauth2_provider',
+    'corsheaders',
 ]
 
 REST_FRAMEWORK = {
@@ -62,6 +72,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
 
 ROOT_URLCONF = 'ecommerceapp.urls'
@@ -93,7 +106,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'ecommerceapp.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
@@ -103,7 +115,7 @@ DATABASES = {
         'NAME': 'ecommercedb',
         'USER': 'root',
         'PASSWORD': '123456',
-        'HOST': '' # mặc định localhost
+        'HOST': ''  # mặc định localhost
     }
 }
 
@@ -127,7 +139,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
@@ -139,7 +150,6 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
@@ -150,5 +160,5 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-#'l9zMXQgw7Zla0uGOQAXD00dzOmKJpEjZkQUO9Rtk'
-#'v0NuFjG03lbFUBlOAaE8cpiju5oNSNnToS7fWU9oKoGVJiSmUUaOJo55SRH0YL9bR9JKNOYAZH1K6YmbYZ1qUiOAfI3QgkGcGzm4XBDYnW5yZvpju8iBFA4KGxFoWxh4'
+# 'l9zMXQgw7Zla0uGOQAXD00dzOmKJpEjZkQUO9Rtk'
+# 'v0NuFjG03lbFUBlOAaE8cpiju5oNSNnToS7fWU9oKoGVJiSmUUaOJo55SRH0YL9bR9JKNOYAZH1K6YmbYZ1qUiOAfI3QgkGcGzm4XBDYnW5yZvpju8iBFA4KGxFoWxh4'

@@ -1,15 +1,23 @@
-from .models import Category, Product, User
+from .models import Category, Product, User, Store
 from rest_framework import serializers
 
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
-        fields = '__all__'
+        fields = ['id', 'name']
+
+
+class StoreSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Store
+        fields = ['id', 'name', 'location', 'description']
 
 
 class ProductSerializer(serializers.ModelSerializer):
     image = serializers.SerializerMethodField(source='image')
+    category = CategorySerializer()
+    store = StoreSerializer()
 
     def get_image(self, product):
         if product.image:
@@ -21,7 +29,8 @@ class ProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        fields = ['id', 'name', 'price', 'image' , 'category']
+        fields = ['id', 'name', 'price', 'image', 'description', 'category', 'store']
+
 
 
 class UserSerializer(serializers.ModelSerializer):

@@ -1,0 +1,8 @@
+.dashboard{
+    display: inline-block;
+    padding: 70px;
+    font-size:20px;
+    box-shadow: 0 1px 3.125rem 0 rgba(0, 0, 0, 0.2);
+    border-left: 5px solid #454592;
+    background-color: white;
+}

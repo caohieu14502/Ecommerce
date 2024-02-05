@@ -1,0 +1,103 @@
+{% extends 'admin/base_site.html' %}
+
+{% block content %}
+<h1>Thống kê </h1>
+<div class="row mt-4" style="display: flex; justify-content: space-evenly;">
+    <div class="col-md-5 col-sm-12">
+        <table class="table table-hover">
+            <tr class="table-info ">
+                <th>Tháng</th>
+                <th>Doanh thu</th>
+            </tr>
+
+            {% for c in stats_revenue %}
+            <tr>
+                <td>{{c.month}}</td>
+                <td>{{c.total_price}}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <div class="col-md-5 col-sm-12 bg-white">
+        <form>
+            <table class="table">
+                <!--            <h4 class="m-2"><i class="fa-solid fa-filter"></i>Bộ lọc</h4>-->
+                <tr class="">
+                    <th><label for="month">Nhập tháng:</label></th>
+                    <th><input type="number" id="month" name="month" min="1" max="12" placeholder="Nhập tháng..."/></th>
+                </tr>
+
+                <tr>
+                    <th><label>Quý </label></th>
+                    <th><input type="number" name="quarter" placeholder="Nhập quý..."/></th>
+                </tr>
+                <tr>
+                    <th><label for="year">Nhập năm:</label></th>
+                    <th><input type="number" id="year" name="year" placeholder="Nhập năm..."/></th>
+                </tr>
+            </table>
+
+            <div class="m-3">
+                <button type="submit" class="btn btn-info">Tìm kiếm</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<form class="w-75" style="margin: 0 auto">
+    <canvas id="chartStatsDate"></canvas>
+</form>
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    let labels = [];
+    let data = [];
+    let colors = [];
+    let borderColors = [];
+    let r, g, b;
+
+    {% for c in stats_revenue %}
+        labels.push('{{c.month}}');
+        data.push({{c.total_price}});
+
+        r = Math.floor(Math.random() * 256);
+        g = Math.floor(Math.random() * 256);
+        b = Math.floor(Math.random() * 256);
+
+        colors.push('rgba(' + r + ',' + g + ',' + b + ',0.5)');
+        borderColors.push('rgba(' + r + ',' + g + ',' + b + ',1)');
+
+    {% endfor %}
+
+    window.onload = function () {
+        const ctx = document.getElementById('chartStatsDate');
+        loadChart(ctx, labels, data, 'bar', colors, borderColors);
+    };
+
+    function loadChart(ctx, labels, data, type, colors, borderColors) {
+        const chartProduct = new Chart(ctx, {
+            type: type,
+            data: {
+                labels: labels,
+                datasets: [{
+                        label: 'Thống kê doanh thu',
+                        data: data,
+                        backgroundColor: colors,
+                        borderColor: borderColors,
+                        borderWidth: 1
+                    }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+
+</script>
+{% endblock %}

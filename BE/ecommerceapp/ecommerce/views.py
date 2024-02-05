@@ -1,17 +1,33 @@
 from rest_framework.response import Response
-from rest_framework import viewsets, generics, parsers, permissions
+from rest_framework import viewsets, generics, parsers, permissions, status
 from ecommerce import serializers, paginators
 from rest_framework.decorators import action
-from .models import Category, Product, User
+from .models import *
 
 
 class CategoryViewSet(viewsets.ViewSet, generics.ListAPIView):
-    queryset = Category.objects.all()
+    queryset = Category.objects.filter(active=True).all()
     serializer_class = serializers.CategorySerializer
 
+    def get_queryset(self):
+        queries = self.queryset
 
-class ProductViewSet(viewsets.ViewSet, generics.ListAPIView):
-    queryset = Product.objects.all()
+        q = self.request.query_params.get("q")
+        if q:
+            queries = queries.filter(name__icontains=q)
+
+        return queries
+
+    @action(methods=['get'], detail=True)
+    def products(self, request, pk):
+        products = self.get_object().product_set.filter(active=True).all()
+
+        return Response(serializers.ProductSerializer(products, many=True, context={'request': request}).data,
+                        status=status.HTTP_200_OK)
+
+
+class ProductViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPIView):
+    queryset = Product.objects.all().order_by('?')
     serializer_class = serializers.ProductSerializer
     pagination_class = paginators.ProductPaginator
 
@@ -29,6 +45,11 @@ class ProductViewSet(viewsets.ViewSet, generics.ListAPIView):
         return queries
 
 
+class StoreViewSet(viewsets.ViewSet, generics.RetrieveAPIView):
+    queryset = Store.objects.all()
+    serializer_class = serializers.StoreSerializer
+
+
 class UserViewSet(viewsets.ViewSet, generics.CreateAPIView):
     queryset = User.objects.filter(is_active=True).all()
     serializer_class = serializers.UserSerializer
@@ -43,3 +64,4 @@ class UserViewSet(viewsets.ViewSet, generics.CreateAPIView):
     @action(methods=['get'], url_path='current-user', url_name='current-user', detail=False)
     def current_user(self, request):
         return Response(serializers.UserSerializer(request.user).data)
+
