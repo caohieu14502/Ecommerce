@@ -15,6 +15,7 @@ const Login = ({navigation}) => {
             "password": password,
             "client_id": "jh0EnJFe2uGzTc3kY7kbLHtUgW7NILwkcY9dpt17",
             "client_secret": "GCUhrDHUFqnGiXGXBSrHV2V0Ip3vBoKSL4xoIVa4eLrNPNG64sptXUoEZqF91KBWHCLFJOEbR1SWDENVPzqXARDR24IpprelYyjWmsPOvWkmtzUe21VY3qRYPEWBRqs1",
+
             "grant_type": "password",
             "withCredentials": "true"
         }
@@ -24,7 +25,6 @@ const Login = ({navigation}) => {
 
         try {
             let res = await Apis.post(endpoints["login"], data);
-
             let user = await authApi(res.data.access_token).get(endpoints["current-user"])
             dispatch({
                 "type": "login",
@@ -40,6 +40,7 @@ const Login = ({navigation}) => {
 
     }
 
+
     return(
         <View style={MyStyles.container}>
             <Text>Login</Text>
@@ -50,7 +51,6 @@ const Login = ({navigation}) => {
             </TouchableOpacity>
         </View>
     )
-
 }
 
 export default Login
