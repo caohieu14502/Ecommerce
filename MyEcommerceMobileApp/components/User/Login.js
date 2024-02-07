@@ -2,18 +2,7 @@ import { View, Text, TextInput, TouchableOpacity } from "react-native"
 import MyStyles from "../../styles/MyStyles"
 import { useContext, useState } from "react"
 import MyContext from "../../configs/MyContext"
-import API, { authApi, endpoints } from "../../configs/API"
-import {
-    GoogleSignin,
-    GoogleSigninButton,
-    statusCodes,
-} from '@react-native-google-signin/google-signin';
-
-GoogleSignin.configure({
-        webClientId: '473990627734-5fcl9shdls9h7j17k1rj79opot27hs6u.apps.googleusercontent.com'
-});
-
-
+import Apis, { authApi, endpoints } from "../../configs/Apis"
 
 const Login = ({navigation}) => {
     const [username, setUsername] = useState()
@@ -24,8 +13,9 @@ const Login = ({navigation}) => {
         let reqData = {
             "username": username,
             "password": password,
-            "client_id": "nunGJXgkHwaf5bQfJMs9JOhCGFf9sShbjZ0UIdIQ",
-            "client_secret": "DLXJNdCBRcwxMXNoNTcXUzUCuLWsDt1B5jM8KcGZ1vWO58CsxRFYxI1lQjhC654Yjt6cYMy1hUIVR3g7UzRBiAyAQHlrF7lvsSCXiytrOKbu8qowahJd8W4iYgFyEIZb",
+            "client_id": "jh0EnJFe2uGzTc3kY7kbLHtUgW7NILwkcY9dpt17",
+            "client_secret": "GCUhrDHUFqnGiXGXBSrHV2V0Ip3vBoKSL4xoIVa4eLrNPNG64sptXUoEZqF91KBWHCLFJOEbR1SWDENVPzqXARDR24IpprelYyjWmsPOvWkmtzUe21VY3qRYPEWBRqs1",
+
             "grant_type": "password",
             "withCredentials": "true"
         }
@@ -34,8 +24,7 @@ const Login = ({navigation}) => {
         }).join('&')
 
         try {
-            let res = await API.post(endpoints["login"], data);
-
+            let res = await Apis.post(endpoints["login"], data);
             let user = await authApi(res.data.access_token).get(endpoints["current-user"])
             dispatch({
                 "type": "login",
@@ -51,22 +40,6 @@ const Login = ({navigation}) => {
 
     }
 
-    // async function onGoogleButtonPress() {
-    //   try {
-    //     await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
-    //     const userInfo = await GoogleSignin.signIn();
-    //        // Get the users ID token
-    //       // const { idToken } = await GoogleSignin.signIn();
-    //       // const googleCredential = auth.GoogleAuthProvider.credential(idToken);
-    
-    //     console.log(userInfo)
-    
-    //     return auth().signInWithCredential(googleCredential);
-    
-    //   } catch (error) {
-    //     console.error(error)
-    //   }
-    // }
 
     return(
         <View style={MyStyles.container}>
@@ -76,20 +49,8 @@ const Login = ({navigation}) => {
             <TouchableOpacity onPress={login}>
                 <Text>Login</Text>
             </TouchableOpacity>
-
         </View>
     )
-
-    // <GoogleSigninButton size={GoogleSigninButton.Size.Wide}
-    // color={GoogleSigninButton.Color.Dark}
-    // disabled={this.state.isSigninInProgress}
-    // onPress={() => {
-    //   onGoogleButtonPress().then(() => {
-    //     console.info("Signed In with Google!!");
-    //     navigation.navigate("Home");
-    //   }).catch(err => console.error(err))
-    // }}
-    // />;
 }
 
 export default Login
