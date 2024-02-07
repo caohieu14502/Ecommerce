@@ -14,6 +14,7 @@ import MyContext from './configs/MyContext';
 import Logout from './components/User/Logout';
 import User from './components/User/User';
 import { AntDesign } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const Tab = createBottomTabNavigator();
 
