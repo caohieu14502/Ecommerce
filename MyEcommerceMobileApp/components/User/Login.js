@@ -2,16 +2,16 @@ import { View, Text, TextInput, TouchableOpacity } from "react-native"
 import MyStyles from "../../styles/MyStyles"
 import { useContext, useState } from "react"
 import MyContext from "../../configs/MyContext"
-import API, { authApi, endpoints } from "../../configs/API"
-import {
-    GoogleSignin,
-    GoogleSigninButton,
-    statusCodes,
-} from '@react-native-google-signin/google-signin';
+import Apis, { authApi, endpoints } from "../../configs/Apis"
+// import {
+//     GoogleSignin,
+//     GoogleSigninButton,
+//     statusCodes,
+// } from '@react-native-google-signin/google-signin';
 
-GoogleSignin.configure({
-        webClientId: '473990627734-5fcl9shdls9h7j17k1rj79opot27hs6u.apps.googleusercontent.com'
-});
+// GoogleSignin.configure({
+//         webClientId: '473990627734-5fcl9shdls9h7j17k1rj79opot27hs6u.apps.googleusercontent.com'
+// });
 
 
 
@@ -24,8 +24,8 @@ const Login = ({navigation}) => {
         let reqData = {
             "username": username,
             "password": password,
-            "client_id": "nunGJXgkHwaf5bQfJMs9JOhCGFf9sShbjZ0UIdIQ",
-            "client_secret": "DLXJNdCBRcwxMXNoNTcXUzUCuLWsDt1B5jM8KcGZ1vWO58CsxRFYxI1lQjhC654Yjt6cYMy1hUIVR3g7UzRBiAyAQHlrF7lvsSCXiytrOKbu8qowahJd8W4iYgFyEIZb",
+            "client_id": "0GO8rhubZGnijL7lkTotNAZrd9atmSEwoleQjElS",
+            "client_secret": "4PdBtWJS6MspG889cAbXGPhABMVhYyPFU01lx3Wasr6XTY5Y1k41jD4wKM2NQYW0U1rMyQXzeNcewkZoMcciuffxJSI5xnv3i3xzS5wWwbcokNzEXKMDXSFHUtRUO9Tq",
             "grant_type": "password",
             "withCredentials": "true"
         }
@@ -34,7 +34,7 @@ const Login = ({navigation}) => {
         }).join('&')
 
         try {
-            let res = await API.post(endpoints["login"], data);
+            let res = await Apis.post(endpoints["login"], data);
 
             let user = await authApi(res.data.access_token).get(endpoints["current-user"])
             dispatch({

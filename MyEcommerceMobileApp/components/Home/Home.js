@@ -1,21 +1,28 @@
-import { ActivityIndicator, ScrollView, View, Text } from 'react-native'
-import React from 'react'
+import React, { useEffect, useState } from 'react';
+import { View, Text, ActivityIndicator, ScrollView } from 'react-native';
 import Apis, { endpoints } from '../../configs/Apis';
 import CardItem from '../Share/CardItem';
 import SearchComponent from '../Share/Search';
-import { useSafeAreaInsets, } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Cate from '../Share/Cate';
 
-const Home = ({navigation}) => {
-  const [products, setProducts] = React.useState(null);
-  const [searchQuery, setSearchQuery] = React.useState('');
+const Home = ({ navigation, route }) => {
+  const [products, setProducts] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const cateId = route.params?.cateId;
   const insets = useSafeAreaInsets();
 
-  React.useEffect(() => {
+  useEffect(() => {
     const loadProducts = async () => {
       let url = endpoints["products"];
 
-      if (searchQuery !== '') {
-        url += `?q=${(searchQuery)}`;
+      if (cateId !== undefined && cateId != null && searchQuery !== undefined && searchQuery != null) {
+        url = `${url}?cate_id=${cateId}&q=${searchQuery}`;
+      }
+      else if (cateId !== undefined && cateId != null)
+        url = `${url}?cate_id=${cateId}`;
+      else if (searchQuery !== undefined && searchQuery != null) {
+        url += `?q=${searchQuery}`;
       }
 
       try {
@@ -27,40 +34,47 @@ const Home = ({navigation}) => {
     };
 
     loadProducts();
-  }, [searchQuery]);
+  }, [searchQuery, cateId]);
 
   const handleSearch = (searchText) => {
     setSearchQuery(searchText);
   };
 
   return (
-    <View style={{
-      paddingTop: insets.top,
-      paddingBottom: insets.bottom,
-      paddingLeft: insets.left,
-      paddingRight: insets.right,
-    }}>
+    <View
+      style={{
+        paddingTop: insets.top,
+        paddingBottom: insets.bottom,
+        paddingLeft: insets.left,
+        paddingRight: insets.right,
+      }}
+    >
       <SearchComponent onSearch={handleSearch} />
-
-      <ScrollView contentContainerStyle={{
-        justifyContent: 'space-between', flexDirection: 'row', flexWrap: 'wrap', paddingTop: 10, backgroundColor: '#E6E6E6', width: '100%'
-      }}>
+      <Cate navigation={navigation} />
+      <ScrollView
+        contentContainerStyle={{
+          justifyContent: 'space-between',
+          flexDirection: 'row',
+          flexWrap: 'wrap',
+          paddingTop: 10,
+          backgroundColor: '#E6E6E6',
+          width: '100%',
+        }}
+      >
         {products === null ? (
           <ActivityIndicator />
+        ) : products.length === 0 ? (
+          <Text>Không có sản phẩm</Text>
         ) : (
-          products.length === 0 ? (
-            <Text>không có sản phẩm</Text>
-          ) : (
-            products.map((data) => (
-              <View key={data.id}>
-                <CardItem navigation={navigation} data={data} />
-              </View>
-            ))
-          )
+          products.map((data) => (
+            <View key={data.id}>
+              <CardItem navigation={navigation} data={data} />
+            </View>
+          ))
         )}
       </ScrollView>
     </View>
-  )
-}
+  );
+};
 
 export default Home;

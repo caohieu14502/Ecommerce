@@ -1,52 +1,99 @@
-import { View, Text, ActivityIndicator, TouchableOpacity } from 'react-native'
-import React from 'react'
+import React, { useEffect, useState } from 'react';
+import { View, Text, ActivityIndicator, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import Apis, { endpoints } from '../../configs/Apis';
-import { useSafeAreaInsets, } from 'react-native-safe-area-context';
-
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const Cate = ({ navigation }) => {
-    const [categories, setCategories] = React.useState(null);
-    const insets = useSafeAreaInsets();
+  const [categories, setCategories] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState('All');
 
-    React.useEffect(() => {
-        const loadCategories = async () => {
-            let url = endpoints["categories"];
+  useEffect(() => {
+    const loadCategories = async () => {
+      let url = endpoints["categories"];
 
-            try {
-                let res = await Apis.get(url);
-                setCategories(res.data);
-            } catch (ex) {
-                console.error(ex);
-            }
-        };
+      try {
+        let res = await Apis.get(url);
+        setCategories(res.data);
+      } catch (ex) {
+        console.error(ex);
+      }
+    };
 
-        loadCategories();
-    }, []);
-    return (
-        <View style={{
-            paddingTop: insets.top,
-            paddingBottom: insets.bottom,
-            paddingLeft: insets.left,
-            paddingRight: insets.right,
-        }}>
-            <TouchableOpacity
-                onPress={() => navigation.navigate('Home')}>
-                <Text>Đến trang demo</Text>
-            </TouchableOpacity>
+    loadCategories();
+  }, []);
 
-            {categories === null ? (
-                <ActivityIndicator />
-            ) : (
-                <View>
-                    {categories.map((category) => (
-                        <View key={category.id}>
-                            <Text>{category.name}</Text>
-                        </View>
-                    ))}
-                </View>
-            )}
-        </View>
-    )
-}
+  const handleCategoryPress = (category) => {
+    setSelectedCategory(category);
+    navigation.navigate('Home', { "cateId": category.id });
+  };
 
-export default Cate
+  return (
+    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.container}>
+      <TouchableOpacity
+        onPress={() => handleCategoryPress('All')}
+        style={[
+          styles.categoryButton,
+          selectedCategory === 'All' && styles.selectedCategoryButton,
+        ]}
+      >
+        <Text
+          style={[
+            styles.categoryButtonText,
+            selectedCategory === 'All' && styles.selectedCategoryText,
+          ]}
+        >
+          Tất cả
+        </Text>
+      </TouchableOpacity>
+      {categories === null ? (
+        <ActivityIndicator />
+      ) : (
+        categories.map((category) => (
+          <TouchableOpacity
+            key={category.id}
+            onPress={() => handleCategoryPress(category)}
+            style={[
+              styles.categoryButton,
+              selectedCategory === category && styles.selectedCategoryButton,
+            ]}
+          >
+            <Text
+              style={[
+                styles.categoryButtonText,
+                selectedCategory === category && styles.selectedCategoryText,
+              ]}
+            >
+              {category.name}
+            </Text>
+          </TouchableOpacity>
+        ))
+      )}
+    </ScrollView>
+  );
+};
+
+export default Cate;
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: 80,
+  },
+  categoryButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    marginHorizontal: 5,
+  },
+  categoryButtonText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  selectedCategoryButton: {
+    borderBottomWidth: 2,
+    borderBottomColor: '#fd5c32',
+  },
+  selectedCategoryText:{
+    color: "#fd5c32",
+  }
+});
