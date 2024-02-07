@@ -4,7 +4,7 @@ import * as ImagePicker from 'expo-image-picker'
 import Apis, { authApi, endpoints } from "../../configs/Apis"
 import { useState } from "react"
 
-const Register = () => {
+const Register = ({navigation}) => {
     const [user, setUser] = useState({
         "first_name": "",
         "last_name": "",
@@ -13,8 +13,32 @@ const Register = () => {
         "avatar": "",
     })
     
-    const register = () => {
+    const register = async () => {
+        let form = new FormData()
+        for (let key in user) {
+            if(key === "avatar") 
+                form.append(key, {
+                    uri: user[key].uri,
+                    name: user[key].fileName,
+                    type: user[key].uri.type
+                })
+            else {
+                form.append(key, user[key])
+            }
+        }
 
+        try {
+            let res = await Apis.post(endpoints['register'], form, {
+                headers: {
+                    "Content-Type": "multipart/form-data"
+                }
+            })
+            
+
+            navigation.navigate("Login")
+        } catch (ex) {
+            console.error(ex)
+        }
     }
 
     const picker = async () => {

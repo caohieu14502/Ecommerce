@@ -7,7 +7,8 @@ export const endpoints = {
     'products': '/products/',
     'product-details': (productId) => `/products/${productId}`,
     'store': (storeId) => `/store/${storeId}`,
-    'login': '/o/token/'
+    'login': '/o/token/',
+    'register': '/users/'
 }
 
 export const authApi = (token) => {
