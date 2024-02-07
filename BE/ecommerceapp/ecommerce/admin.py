@@ -25,6 +25,7 @@ class EcommerceAdminSite(admin.AdminSite):
             path('stats-revenue/', self.stats_revenue_view)
         ] + super().get_urls()
 
+
     def stats_revenue_view(self, request):
         month = request.GET.get('month')
         year = request.GET.get('year')

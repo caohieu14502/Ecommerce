@@ -22,8 +22,19 @@ class CategoryViewSet(viewsets.ViewSet, generics.ListAPIView):
     def products(self, request, pk):
         products = self.get_object().product_set.filter(active=True).all()
 
+        store_id = self.request.query_params.get("store_id")
+        if store_id:
+            products = products.filter(store_id=store_id)
+
         return Response(serializers.ProductSerializer(products, many=True, context={'request': request}).data,
                         status=status.HTTP_200_OK)
+
+    # @action(methods=['get'], detail=True)
+    # def categories(self, request, pk):
+    #     categories1 = self.get_object().filter(product__store_id=1).values('name').distinct()
+    #
+    #     return Response(serializers.CategorySerializer(categories1, many=True, context={'request': request}).data,
+    #                     status=status.HTTP_200_OK)
 
 
 class ProductViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPIView):
@@ -48,6 +59,13 @@ class ProductViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAP
 class StoreViewSet(viewsets.ViewSet, generics.RetrieveAPIView):
     queryset = Store.objects.all()
     serializer_class = serializers.StoreSerializer
+
+    @action(methods=['get'], detail=True)
+    def categories(self, request, pk):
+        categories = Category.objects.filter(product__store_id=self.get_object()).distinct()
+
+        return Response(serializers.CategorySerializer(categories, many=True, context={'request': request}).data,
+                        status=status.HTTP_200_OK)
 
 
 class UserViewSet(viewsets.ViewSet, generics.CreateAPIView):

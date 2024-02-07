@@ -22,7 +22,7 @@ const SearchComponent = ({ onSearch }) => {
         <Ionicons name="search" size={24} color="white" />
       </TouchableOpacity>
       <TouchableOpacity style={styles.messageButton} onPress={handleSearch}>
-        <AntDesign name="message1" size={24} color="black" />
+        <AntDesign name="message1" size={24} color="white" />
       </TouchableOpacity>
     </View>
   );
@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 8,
     // marginLeft: 10,
-    // marginHorizontal: 10,
+    marginRight: 10,
   }
 });
 

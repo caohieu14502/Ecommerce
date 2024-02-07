@@ -8,10 +8,33 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = ['id', 'name']
 
 
+class UserSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ['username', 'password', 'avatar']
+        extra_kwargs = {
+            'password': {
+                'write_only': True
+            }
+        }
+
+        def create(self, validated_data):
+            data = validated_data.copy()
+
+            user = User(**data)
+            user.set_password(data['password'])
+            user.save()
+
+            return user
+
+
 class StoreSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+
     class Meta:
         model = Store
-        fields = ['id', 'name', 'location', 'description']
+        fields = ['id', 'name', 'description', 'location', 'user']
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -30,24 +53,3 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = ['id', 'name', 'price', 'image', 'description', 'category', 'store']
-
-
-
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['username', 'password', 'avatar']
-        extra_kwargs = {
-            'password': {
-                'write_only': True
-            }
-        }
-
-        def create(self, validated_data):
-            data = validated_data.copy()
-
-            user = User(**data)
-            user.set_password(data['password'])
-            user.save()
-
-            return user
