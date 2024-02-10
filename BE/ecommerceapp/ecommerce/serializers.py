@@ -12,7 +12,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['username', 'password', 'avatar']
+        fields = ['username', 'password', 'avatar', 'store', 'user_role', 'status']
         extra_kwargs = {
             'password': {
                 'write_only': True
@@ -30,11 +30,26 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class StoreSerializer(serializers.ModelSerializer):
-    user = UserSerializer()
 
     class Meta:
         model = Store
-        fields = ['id', 'name', 'description', 'location', 'user']
+        fields = ['id', 'name', 'description', 'location']
+
+    def create(self, validated_data):
+        request = self.context.get("request")
+
+        user = User.objects.get(pk=request.user.pk)
+        user.save()
+
+        post = Store()
+        post.name = validated_data['name']
+        post.description = validated_data['description']
+        post.location = validated_data['location']
+        post.user = request.user
+
+        post.save()
+
+        return post
 
 
 class ProductSerializer(serializers.ModelSerializer):

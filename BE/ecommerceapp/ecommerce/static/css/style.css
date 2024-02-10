@@ -6,3 +6,8 @@
     border-left: 5px solid #454592;
     background-color: white;
 }
+
+input#users {
+    width: 40px;
+    height: 40px;
+}

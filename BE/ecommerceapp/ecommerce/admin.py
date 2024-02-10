@@ -8,6 +8,7 @@ from .models import *
 from django.db.models import Sum, F, Q
 from django.db.models.functions import ExtractMonth
 from django.db.models import Count
+from django.shortcuts import render
 
 
 class EcommerceAdminSite(admin.AdminSite):
@@ -22,7 +23,8 @@ class EcommerceAdminSite(admin.AdminSite):
 
     def get_urls(self):
         return [
-            path('stats-revenue/', self.stats_revenue_view)
+            path('stats-revenue/', self.stats_revenue_view),
+            path('store-approval/', self.store_approval)
         ] + super().get_urls()
 
 
@@ -51,7 +53,7 @@ class EcommerceAdminSite(admin.AdminSite):
             'stats_revenue': result,
         })
 
-    def stats(request):
+    def stats(self, request):
         stats_count_product_by_cate = Category.objects.annotate(count=Count('product__name')).values('name', 'count')
         stats_count_product = Product.objects.count()
         stats_count_cate = Category.objects.count()
@@ -65,6 +67,22 @@ class EcommerceAdminSite(admin.AdminSite):
             'count_category': stats_count_cate,
             'count_product': stats_count_product,
             'stats_revenue_store': stats_revenue_store
+        })
+
+
+    def store_approval(self, request):
+        if request.method == 'POST':
+            users = User.objects.filter(pk__in=request.POST["users"])
+            print(request.POST)
+            if request.POST["action"] == "reject":
+                users.update(status="Rejected")
+            else:
+                store_role = Store.objects.get(pk=3)
+                users.update(status="Approved", user_role_id=store_role)
+
+        stores = Store.objects.filter(user__status="Pending").all()
+        return render(request, 'admin/store_approval.html', {
+            'stores': stores,
         })
 
 

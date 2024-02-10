@@ -59,6 +59,7 @@ class ProductViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAP
 class StoreViewSet(viewsets.ViewSet, generics.RetrieveAPIView):
     queryset = Store.objects.all()
     serializer_class = serializers.StoreSerializer
+    permission_classes = [permissions.IsAuthenticated()]
 
     @action(methods=['get'], detail=True)
     def categories(self, request, pk):
@@ -66,6 +67,14 @@ class StoreViewSet(viewsets.ViewSet, generics.RetrieveAPIView):
 
         return Response(serializers.CategorySerializer(categories, many=True, context={'request': request}).data,
                         status=status.HTTP_200_OK)
+
+    @action(methods=['post'], url_path='register-store', url_name='register-store', detail=False)
+    def register_store(self, request):
+        serializer = serializers.StoreSerializer(data=request.data, context={'request': request})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserViewSet(viewsets.ViewSet, generics.CreateAPIView):
