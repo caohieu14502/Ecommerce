@@ -34,7 +34,6 @@ const Register = ({navigation}) => {
                 }
             })
             
-
             navigation.navigate("Login")
         } catch (ex) {
             console.error(ex)

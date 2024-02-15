@@ -1,10 +1,9 @@
 import React, { useReducer } from "react";
 import Home from './components/Home/Home'
-import Cate from './components/Share/Cate';
+import Cate from './components/Share/Category';
 import 'react-native-gesture-handler';
 import { NavigationContainer } from "@react-navigation/native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import ProductDetails from "./components/Product/ProductDetails";
 import CardItem from "./components/Share/CardItem";
 import Store from "./components/Store/Store";
@@ -13,8 +12,11 @@ import MyUserReducer from './reducers/MyUserReducer';
 import MyContext from './configs/MyContext';
 import Logout from './components/User/Logout';
 import User from './components/User/User';
-import { AntDesign } from '@expo/vector-icons';
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import Register from './components/User/Register';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { Feather } from '@expo/vector-icons';
+import Product from "./components/Store/Product";
+
 
 const Tab = createBottomTabNavigator();
 
@@ -25,33 +27,36 @@ const App = () => {
             <MyContext.Provider value={[user, dispatch]}>
                 <NavigationContainer>
                     <Tab.Navigator initialRouteName={Home}
-                        // shifting={true}
-                        screenOptions={{ headerShown: false }}
-                    // activeColor="#f0edf6"
-                    // inactiveColor="#3e2465"
-                    // barStyle={{ backgroundColor: '#694fad' }}
+                        screenOptions={{ headerShown: false }} backBehavior={"history"}
                     >
+                        <Tab.Screen name="Home" component={Home} options={{
+                            tabBarIcon: () => (     
+                                <Feather name="home" size={24} color="black" />
+                            ),
+                        }} />
                         {user === null ? <>
                             <Tab.Screen name='Login' component={Login} options={{ title: "Login" }} />
+                            <Tab.Screen name='Res' component={Register} options={{ title: "Register" }} />
                         </> : <>
-                            {/* Profile  */}
                             <Tab.Screen name="User" component={User} options={{ title: user.username }} />
                             <Tab.Screen name="Logout" component={Logout} />
-                            {/* options={{drawerItemStyle: {display: "none"}}} */}
                         </>}
 
-                        <Tab.Screen name="Home" component={Home}
-                            options={{
-                                tabBarVisible: false,
-                                tabBarIcon: ({ }) => (
-                                    <AntDesign name="user" size={16} color="black" />
-                                ),
-                            }} />
-
-                        <Tab.Screen name="Cate" component={Cate} />
-                        <Tab.Screen name="CardItem" component={CardItem} options={{ title: "Chi tiết bài học", drawerItemStyle: { display: "none" } }} />
-                        <Tab.Screen name="ProductDetails" component={ProductDetails} options={{ title: "Chi tiết sp", tabBarVisible: false, }} />
-                        <Tab.Screen name="Store" component={Store} options={{ tabBarVisible: false, }} />
+                        <Tab.Screen name="Cate" component={Cate} options={{
+                            tabBarItemStyle: { display: "none" }
+                        }} />
+                        <Tab.Screen name="CardItem" component={CardItem} options={{
+                            tabBarItemStyle: { display: "none" }
+                        }} />
+                        <Tab.Screen name="ProductDetails" component={ProductDetails} options={{
+                            tabBarItemStyle: { display: "none" }
+                        }} />
+                        <Tab.Screen name="Store" component={Store} options={{
+                            tabBarItemStyle: { display: "none" }
+                        }} />
+                        <Tab.Screen name="Product" component={Product} options={{
+                            tabBarItemStyle: { display: "none" }
+                        }} />
                     </Tab.Navigator>
                 </NavigationContainer>
             </MyContext.Provider>

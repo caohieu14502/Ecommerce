@@ -6,7 +6,7 @@ from .models import *
 
 
 class CategoryViewSet(viewsets.ViewSet, generics.ListAPIView):
-    queryset = Category.objects.filter(active=True).all()
+    queryset = Category.objects.filter(active=True).all().order_by('?')[:10]
     serializer_class = serializers.CategorySerializer
 
     def get_queryset(self):
@@ -28,13 +28,6 @@ class CategoryViewSet(viewsets.ViewSet, generics.ListAPIView):
 
         return Response(serializers.ProductSerializer(products, many=True, context={'request': request}).data,
                         status=status.HTTP_200_OK)
-
-    # @action(methods=['get'], detail=True)
-    # def categories(self, request, pk):
-    #     categories1 = self.get_object().filter(product__store_id=1).values('name').distinct()
-    #
-    #     return Response(serializers.CategorySerializer(categories1, many=True, context={'request': request}).data,
-    #                     status=status.HTTP_200_OK)
 
 
 class ProductViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPIView):
@@ -67,6 +60,29 @@ class StoreViewSet(viewsets.ViewSet, generics.RetrieveAPIView):
         return Response(serializers.CategorySerializer(categories, many=True, context={'request': request}).data,
                         status=status.HTTP_200_OK)
 
+    @action(methods=['get'], detail=True)
+    def products(self, request, pk):
+        products = self.get_object().product_set.filter(active=True).all()
+
+        cate_id = self.request.query_params.get("cate_id")
+        sort_by = self.request.query_params.get("sort_by")
+        order = self.request.query_params.get("order")
+        q = self.request.query_params.get("q")
+
+        if q:
+            products = products.filter(name__icontains=q)
+        if cate_id:
+            products = products.filter(category=cate_id)
+        if sort_by == 'sort':
+            products = products.order_by('-created_date')
+        if order == 'asc':
+            products = products.order_by('price')
+        if order == 'desc':
+            products = products.order_by('-price')
+
+        return Response(serializers.ProductSerializer(products, many=True, context={'request': request}).data,
+                        status=status.HTTP_200_OK)
+
 
 class UserViewSet(viewsets.ViewSet, generics.CreateAPIView):
     queryset = User.objects.filter(is_active=True).all()
@@ -82,4 +98,3 @@ class UserViewSet(viewsets.ViewSet, generics.CreateAPIView):
     @action(methods=['get'], url_path='current-user', url_name='current-user', detail=False)
     def current_user(self, request):
         return Response(serializers.UserSerializer(request.user).data)
-

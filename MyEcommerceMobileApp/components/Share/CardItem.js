@@ -33,7 +33,6 @@ const CardItem = ({ navigation, data }) => {
                         ellipsizeMode="tail"
                     >
                         {data.name} 
-                        {data.id}
                     </Text>
                 </View>
                 <Text className="text-red-600 pb-2" >{data.price}₫</Text>

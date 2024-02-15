@@ -3,14 +3,12 @@ import { View, Text, Image, ScrollView, StyleSheet, ActivityIndicator, Touchable
 import Apis, { endpoints } from '../../configs/Apis';
 import { Ionicons } from '@expo/vector-icons';
 import RenderHTML from 'react-native-render-html';
-import { AntDesign } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons';
 
 const ProductDetails = ({ route, navigation }) => {
   const productId = route.params?.productId;
   const [product, setProduct] = React.useState(null);
   const windowDimensions = useWindowDimensions();
-  const imageWidth = windowDimensions.width;
 
   React.useEffect(() => {
     const loadProduct = async () => {
@@ -48,7 +46,7 @@ const ProductDetails = ({ route, navigation }) => {
   };
 
   return (
-    <ScrollView className="bg-slate-100	" style={styles.container}>
+    <ScrollView className="bg-slate-100" style={styles.container}>
       <View className="relative">
         <Image source={{ uri: product.image }} style={styles.image} />
         <TouchableOpacity className="absolute z-20 top-8 left-4 border-2 border-transparent	rounded-full bg-gray-400" onPress={handleGoBack}>
@@ -63,24 +61,36 @@ const ProductDetails = ({ route, navigation }) => {
         </Text>
       </View>
 
-      <View className="bg-white p-4 mb-2">
+      <View className="bg-white p-4 flex-row justify-between	">
+        <View className="flex-row">
+          <Image
+            source={{ uri: 'https://res.cloudinary.com/dy4p98hhs/image/upload/v1705723922/i01x5nw5i5ine1lvtwms.jpg' }}
+            style={{
+              width: 80,
+              height: 80,
+              resizeMode: 'cover',
+            }}
+          />
+          <View className="ml-2">
+            <Text className="font-medium text-xl">{product.store.name}</Text>
+            <View className="flex-row items-center	">
+              <Entypo name="location-pin" size={20} color="black" />
+              <Text className="font-light	text-xl">{product.store.location}</Text>
+            </View>
+          </View>
+        </View>
+        <View>
+          <TouchableOpacity className="border-2	border-red-600 p-1 " style={styles.viewShopButton} onPress={handleViewShop}>
+            <Text className="text-red-500	">Xem Shop </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      <View className="bg-white p-4 mt-2">
+        <Text className="font-normal">Mô tả sản phẩm</Text>
         <RenderHTML tagsStyles={tagsStyles} source={{ html: product.description }} contentWidth={windowDimensions.width} />
       </View>
 
-      <View className="bg-white p-4 flex-row justify-center	">
-      <TouchableOpacity>
-        <Image
-          source={require('../../img/anh.jpg')}
-          style={{
-            width: '100%',
-            height: '50%',
-            resizeMode: 'cover',
-            borderRadius: 50
-          }}
-        /></TouchableOpacity>
-        <Text style={styles.viewShopButtonText}>{product.store.name} {product.store.user.username}</Text>
-        <TouchableOpacity style={styles.viewShopButton} onPress={handleViewShop}><Text>Xem shop </Text></TouchableOpacity>
-      </View>
     </ScrollView>
   );
 };
@@ -88,23 +98,13 @@ const ProductDetails = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // backgroundColor: '#fff',
   },
   image: {
     width: '100%',
     height: 300,
   },
   viewShopButton: {
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 8,
     marginTop: 16,
-  },
-  viewShopButtonText: {
-    color: 'black',
-    fontSize: 16,
-    fontWeight: 'bold',
-    textAlign: 'center',
   },
 });
 
