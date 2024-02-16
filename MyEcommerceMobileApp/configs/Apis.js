@@ -1,6 +1,6 @@
 import axios, { Axios } from "axios";
 
-const Host = 'http://192.168.100.10:8000/'
+const Host = 'http://192.168.1.12:8000/'
 
 export const endpoints = {
     'categories': '/categories/',
@@ -8,6 +8,8 @@ export const endpoints = {
     // 'category-product':(cateId) `categories/${cateId}/products`,
     'product-details': (productId) => `/products/${productId}`,
     'store': (storeId) => `/store/${storeId}`,
+    'category-store': (storeId) => `/store/${storeId}/categories/`,
+    'products-store': (storeId) => `/store/${storeId}/products/`,
     'login': '/o/token/',
     'current-user': '/users/current-user/',
     'register': '/users/',

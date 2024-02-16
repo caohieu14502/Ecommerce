@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ActivityIndicator, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { Text, ActivityIndicator, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import Apis, { endpoints } from '../../configs/Apis';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const Cate = ({ navigation }) => {
   const [categories, setCategories] = useState(null);

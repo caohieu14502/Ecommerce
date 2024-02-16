@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ActivityIndicator, ScrollView } from 'react-native';
+import { View, Text, ActivityIndicator, ScrollView, StyleSheet } from 'react-native';
 import Apis, { endpoints } from '../../configs/Apis';
 import CardItem from '../Share/CardItem';
 import SearchComponent from '../Share/Search';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import Cate from '../Share/Cate';
+import Cate from '../Share/Category';
 
 const Home = ({ navigation, route }) => {
   const [products, setProducts] = useState(null);
@@ -16,9 +16,8 @@ const Home = ({ navigation, route }) => {
     const loadProducts = async () => {
       let url = endpoints["products"];
 
-      if (cateId !== undefined && cateId != null && searchQuery !== undefined && searchQuery != null) {
+      if (cateId !== undefined && cateId != null && searchQuery !== undefined && searchQuery != null)
         url = `${url}?cate_id=${cateId}&q=${searchQuery}`;
-      }
       else if (cateId !== undefined && cateId != null)
         url = `${url}?cate_id=${cateId}`;
       else if (searchQuery !== undefined && searchQuery != null) {
@@ -49,7 +48,10 @@ const Home = ({ navigation, route }) => {
         paddingRight: insets.right,
       }}
     >
-      <SearchComponent onSearch={handleSearch} />
+      <SearchComponent onSearch={handleSearch} navigation={navigation} />
+      {/* <TouchableOpacity style={styles.messageButton} onPress={handleSearch}>
+        <AntDesign name="message1" size={24} color="white" />
+      </TouchableOpacity> */}
       <Cate navigation={navigation} />
       <ScrollView
         contentContainerStyle={{
@@ -64,7 +66,11 @@ const Home = ({ navigation, route }) => {
         {products === null ? (
           <ActivityIndicator />
         ) : products.length === 0 ? (
-          <Text>Không có sản phẩm</Text>
+          <View style={{ flex: 1 }}>
+            <Text className="text-center p-2" >
+              Không có sản phẩm
+            </Text>
+          </View>
         ) : (
           products.map((data) => (
             <View key={data.id}>
@@ -78,3 +84,13 @@ const Home = ({ navigation, route }) => {
 };
 
 export default Home;
+
+const styles = StyleSheet.create({
+  messageButton: {
+    backgroundColor: '#ff5722',
+    padding: 10,
+    borderRadius: 8,
+    // marginLeft: 10,
+    marginRight: 10,
+  }
+})

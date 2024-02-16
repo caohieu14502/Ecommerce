@@ -1,6 +1,6 @@
 import React, { useReducer } from "react";
 import Home from './components/Home/Home'
-import Cate from './components/Share/Cate';
+import Cate from './components/Share/Category';
 import 'react-native-gesture-handler';
 import { NavigationContainer } from "@react-navigation/native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -13,6 +13,7 @@ import MyContext from './configs/MyContext';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Feather } from '@expo/vector-icons';
 import Profiles from "./components/User/Profiles";
+import Product from "./components/Store/Product";
 
 
 const Tab = createBottomTabNavigator();
@@ -66,6 +67,9 @@ const App = () => {
                             tabBarItemStyle: { display: "none" }
                         }} />
                         <Tab.Screen name="Store" component={Store} options={{
+                            tabBarItemStyle: { display: "none" }
+                        }} />
+                        <Tab.Screen name="Product" component={Product} options={{
                             tabBarItemStyle: { display: "none" }
                         }} />
                     </Tab.Navigator>
