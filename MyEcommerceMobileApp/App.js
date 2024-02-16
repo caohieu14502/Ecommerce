@@ -4,54 +4,70 @@ import Cate from './components/Share/Cate';
 import 'react-native-gesture-handler';
 import { NavigationContainer } from "@react-navigation/native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import ProductDetails from "./components/Product/ProductDetails";
 import CardItem from "./components/Share/CardItem";
 import Store from "./components/Store/Store";
 import Login from './components/User/Login';
 import MyUserReducer from './reducers/MyUserReducer';
 import MyContext from './configs/MyContext';
-import Logout from './components/User/Logout';
-import User from './components/User/User';
-import { AntDesign } from '@expo/vector-icons';
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { Feather } from '@expo/vector-icons';
+import Profiles from "./components/User/Profiles";
+
 
 const Tab = createBottomTabNavigator();
 
 const App = () => {
+    var base_color = "#ff5722"
     const [user, dispatch] = useReducer(MyUserReducer, null)
+    console.log(`App: ${user}`)
     return (
         <SafeAreaProvider>
             <MyContext.Provider value={[user, dispatch]}>
                 <NavigationContainer>
                     <Tab.Navigator initialRouteName={Home}
-                        // shifting={true}
                         screenOptions={{ headerShown: false }}
-                    // activeColor="#f0edf6"
-                    // inactiveColor="#3e2465"
-                    // barStyle={{ backgroundColor: '#694fad' }}
                     >
+                        <Tab.Screen name="Home" component={Home} options={{
+                            tabBarActiveTintColor: base_color,
+                            tabBarIcon: ({color}) => (
+                                <Feather name="home" size={24} color={color}/>
+                            ), 
+                        }} />
+                        <Tab.Screen name="Categories" component={Cate} options={{
+                            tabBarActiveTintColor: base_color,
+                            tabBarIcon: ({color}) => (
+                                <Feather name="database" size={24} color={color}/>
+                            ), 
+                        }} />
                         {user === null ? <>
-                            <Tab.Screen name='Login' component={Login} options={{ title: "Login" }} />
+                            <Tab.Screen name='Login' component={Login} options={{ title: "Profiles", 
+                            tabBarActiveTintColor: base_color,
+                            tabBarIcon: ({color}) => (
+                                <Feather name="user" size={24} color={color}/>
+                            ), 
+                        }} />
                         </> : <>
-                            {/* Profile  */}
-                            <Tab.Screen name="User" component={User} options={{ title: user.username }} />
-                            <Tab.Screen name="Logout" component={Logout} />
-                            {/* options={{drawerItemStyle: {display: "none"}}} */}
+                            {/* <Tab.Screen name="User" component={User} options={{ title: user.username }} />
+                            <Tab.Screen name="Logout" component={Logout} /> */}
+                            <Tab.Screen name="Profiles" component={Profiles} options={{
+                            tabBarActiveTintColor: base_color,
+                            tabBarIcon: ({color}) => (
+                                <Feather name="user" size={24} color={color}/>
+                            ), 
+                        }} />
                         </>}
 
-                        <Tab.Screen name="Home" component={Home}
-                            options={{
-                                tabBarVisible: false,
-                                tabBarIcon: ({ }) => (
-                                    <AntDesign name="user" size={16} color="black" />
-                                ),
-                            }} />
 
-                        <Tab.Screen name="Cate" component={Cate} />
-                        <Tab.Screen name="CardItem" component={CardItem} options={{ title: "Chi tiết bài học", drawerItemStyle: { display: "none" } }} />
-                        <Tab.Screen name="ProductDetails" component={ProductDetails} options={{ title: "Chi tiết sp", tabBarVisible: false, }} />
-                        <Tab.Screen name="Store" component={Store} options={{ tabBarVisible: false, }} />
+                        <Tab.Screen name="CardItem" component={CardItem} options={{
+                            tabBarItemStyle: { display: "none" }
+                        }} />
+                        <Tab.Screen name="ProductDetails" component={ProductDetails} options={{
+                            tabBarItemStyle: { display: "none" }
+                        }} />
+                        <Tab.Screen name="Store" component={Store} options={{
+                            tabBarItemStyle: { display: "none" }
+                        }} />
                     </Tab.Navigator>
                 </NavigationContainer>
             </MyContext.Provider>
@@ -60,3 +76,5 @@ const App = () => {
 };
 
 export default App;
+
+style = {tabBarActiveBackgroundColor: "#ff5722"}

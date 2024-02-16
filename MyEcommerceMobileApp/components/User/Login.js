@@ -13,8 +13,8 @@ const Login = ({navigation}) => {
         let reqData = {
             "username": username,
             "password": password,
-            "client_id": "0GO8rhubZGnijL7lkTotNAZrd9atmSEwoleQjElS",
-            "client_secret": "4PdBtWJS6MspG889cAbXGPhABMVhYyPFU01lx3Wasr6XTY5Y1k41jD4wKM2NQYW0U1rMyQXzeNcewkZoMcciuffxJSI5xnv3i3xzS5wWwbcokNzEXKMDXSFHUtRUO9Tq",
+            "client_id": "jh0EnJFe2uGzTc3kY7kbLHtUgW7NILwkcY9dpt17",
+            "client_secret": "GCUhrDHUFqnGiXGXBSrHV2V0Ip3vBoKSL4xoIVa4eLrNPNG64sptXUoEZqF91KBWHCLFJOEbR1SWDENVPzqXARDR24IpprelYyjWmsPOvWkmtzUe21VY3qRYPEWBRqs1",
             "grant_type": "password",
             "withCredentials": "true"
         }
@@ -40,15 +40,22 @@ const Login = ({navigation}) => {
     }
 
 
-    return(
-        <View style={MyStyles.container}>
-            <Text>Login</Text>
+    return(<>
+            <View style={MyStyles.container}><Text>Login</Text></View>
+            <View style={MyStyles.container}>
+            <Text>Username:</Text>
             <TextInput value={username} onChangeText={t => setUsername(t)} placeholder="Username"/>
+            </View>
+            <View style={MyStyles.container}>
+            <Text >Password:</Text>
             <TextInput value={password} onChangeText={t => setPassword(t)} secureTextEntry={true} placeholder="Password"/>
-            <TouchableOpacity onPress={login}>
-                <Text>Login</Text>
-            </TouchableOpacity>
-        </View>
+            </View>
+            <View style={MyStyles.container}>
+                <TouchableOpacity onPress={login}>
+                    <Text>Login</Text>
+                </TouchableOpacity>
+            </View>
+        </>
     )
 }
 
