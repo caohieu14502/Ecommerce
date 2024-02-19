@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-egf+7kwoh2doyf9)7i$47l8tlupe$8ze5rowp7kwz5=#8h+rlu
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
+DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760
 # Application definition
 CORS_ORIGIN_ALLOW_ALL = True
 
@@ -162,3 +162,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # 'jh0EnJFe2uGzTc3kY7kbLHtUgW7NILwkcY9dpt17'
 # 'GCUhrDHUFqnGiXGXBSrHV2V0Ip3vBoKSL4xoIVa4eLrNPNG64sptXUoEZqF91KBWHCLFJOEbR1SWDENVPzqXARDR24IpprelYyjWmsPOvWkmtzUe21VY3qRYPEWBRqs1'
+OAUTH2_PROVIDER = {
+    'OAUTH2_BACKEND_CLASS': 'oauth2_provider.oauth2_backends.JSONOAuthLibCore'
+}
+# 'l9zMXQgw7Zla0uGOQAXD00dzOmKJpEjZkQUO9Rtk'
+# 'v0NuFjG03lbFUBlOAaE8cpiju5oNSNnToS7fWU9oKoGVJiSmUUaOJo55SRH0YL9bR9JKNOYAZH1K6YmbYZ1qUiOAfI3QgkGcGzm4XBDYnW5yZvpju8iBFA4KGxFoWxh4'

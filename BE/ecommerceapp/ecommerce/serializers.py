@@ -1,6 +1,5 @@
 from rest_framework.generics import get_object_or_404
-
-from .models import Category, Product, User, Store, OrderDetail
+from .models import Category, Product, User, Store, Review, Comment, OrderDetail
 from rest_framework import serializers
 
 
@@ -11,10 +10,10 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = User
         fields = ['username', 'password', 'avatar', 'store', 'user_role', 'status']
+
         extra_kwargs = {
             'password': {
                 'write_only': True
@@ -105,3 +104,18 @@ class OrderDetailSerializer(serializers.ModelSerializer):
     # Dung context de lay Product Id va tao Order o ben View
     def create(self, validated_data):
         pass
+
+class ReviewSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+
+    class Meta:
+        model = Review
+        fields = ['id', 'created_date', 'star', 'note', 'user']
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+
+    class Meta:
+        model = Comment
+        fields = ['id', 'created_date', 'content', 'user']

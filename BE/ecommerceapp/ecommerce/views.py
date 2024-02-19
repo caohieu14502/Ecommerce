@@ -5,10 +5,12 @@ from ecommerce import serializers, paginators
 from rest_framework.decorators import action
 from .models import *
 from .permission import StoreOwnerPermission
+# from permission import OwnerAuthenticated
 
 
 class CategoryViewSet(viewsets.ViewSet, generics.ListAPIView):
-    queryset = Category.objects.filter(active=True).all()
+    # queryset = Category.objects.filter(active=True).all().order_by('?')[:10]
+    queryset = Category.objects.filter(active=True).all().order_by('?')
     serializer_class = serializers.CategorySerializer
 
     def get_queryset(self):
@@ -30,13 +32,6 @@ class CategoryViewSet(viewsets.ViewSet, generics.ListAPIView):
 
         return Response(serializers.ProductSerializer(products, many=True, context={'request': request}).data,
                         status=status.HTTP_200_OK)
-
-    # @action(methods=['get'], detail=True)
-    # def categories(self, request, pk):
-    #     categories1 = self.get_object().filter(product__store_id=1).values('name').distinct()
-    #
-    #     return Response(serializers.CategorySerializer(categories1, many=True, context={'request': request}).data,
-    #                     status=status.HTTP_200_OK)
 
 
 class ProductViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveUpdateDestroyAPIView, generics.CreateAPIView):
@@ -67,11 +62,34 @@ class ProductViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveUp
         self.check_object_permissions(self.request, obj)
         return obj
 
+    @action(methods=['get'], detail=True)
+    def comments(self, request, pk):
+        c = Comment.objects.filter(active=True, product=self.get_object()).all()
+
+        return Response(serializers.CommentSerializer(c, many=True, context={'request': request}).data,
+                        status=status.HTTP_200_OK)
+
+    @action(methods=['post'], detail=True)
+    def add_comments(self, request, pk):
+        c = Comment.objects.create(user=request.user, product=self.get_object(),
+                                  content=request.data.get('content'))
+
+        return Response(serializers.CommentSerializer(c).data,
+                        status=status.HTTP_201_CREATED)
+
 
 class StoreViewSet(viewsets.ViewSet, generics.RetrieveAPIView):
     queryset = Store.objects.all()
     serializer_class = serializers.StoreSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+    # permission_classes = [permissions.AllowAny]
+
+    # def get_permissions(self):
+    #     if self.action in ['add_review']:
+    #         return [permissions.IsAuthenticated()]
+    #
+    #     return self.permission_classes
 
     @action(methods=['get'], detail=True)
     def categories(self, request, pk):
@@ -87,6 +105,55 @@ class StoreViewSet(viewsets.ViewSet, generics.RetrieveAPIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+      
+    @action(methods=['get'], detail=True)
+    def products(self, request, pk):
+        products = self.get_object().product_set.filter(active=True).all()
+
+        cate_id = self.request.query_params.get("cate_id")
+        sort_by = self.request.query_params.get("sort_by")
+        order = self.request.query_params.get("order")
+        q = self.request.query_params.get("q")
+
+        if q:
+            products = products.filter(name__icontains=q)
+        if cate_id:
+            products = products.filter(category=cate_id)
+        if sort_by == 'sort':
+            products = products.order_by('-created_date')
+        if order == 'asc':
+            products = products.order_by('price')
+        if order == 'desc':
+            products = products.order_by('-price')
+
+        return Response(serializers.ProductSerializer(products, many=True, context={'request': request}).data,
+                        status=status.HTTP_200_OK)
+
+    @action(methods=['get'], detail=True)
+    def reviews(self, request, pk):
+        r = Review.objects.filter(active=True, store=self.get_object()).all()
+
+        star = self.request.query_params.get("star")
+
+        if star:
+            r = r.filter(star=star)
+
+        return Response(serializers.ReviewSerializer(r, many=True, context={'request': request}).data,
+                        status=status.HTTP_200_OK)
+
+    @action(methods=['post'], detail=True)
+    def add_review(self, request, pk):
+        r = Review.objects.create(user=request.user, store=self.get_object(),
+                                  star=request.data.get('star'),
+                                  note=request.data.get('note'))
+
+        return Response(serializers.ReviewSerializer(r).data,
+                        status=status.HTTP_201_CREATED)
+
+
+class ReviewViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPIView, generics.UpdateAPIView):
+    queryset = Review.objects.all()
+    serializer_class = serializers.ReviewSerializer
 
 
 class UserViewSet(viewsets.ViewSet, generics.CreateAPIView):
@@ -103,7 +170,6 @@ class UserViewSet(viewsets.ViewSet, generics.CreateAPIView):
     @action(methods=['get'], url_path='current-user', url_name='current-user', detail=False)
     def current_user(self, request):
         return Response(serializers.UserSerializer(request.user).data)
-
 
 class ReceiptViewSet(viewsets.ViewSet):
     permission_classes = [permissions.IsAuthenticated]
@@ -133,3 +199,4 @@ class ReceiptViewSet(viewsets.ViewSet):
         else:
             return Response(serialized.errors,
                             status=status.HTTP_400_BAD_REQUEST)
+

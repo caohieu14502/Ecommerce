@@ -34,7 +34,6 @@ const Register = ({navigation}) => {
                 }
             })
             
-
             navigation.navigate("Login")
         } catch (ex) {
             console.error(ex)
@@ -63,10 +62,10 @@ const Register = ({navigation}) => {
         <View style={MyStyles.container}>
             <Text>Register</Text>
 
-            <TextInput placeholder="Firstname" value={user.first_name} onChange={t=>change("first_name", t)}/>
-            <TextInput placeholder="Lastname" value={user.last_name} onChange={t=>change("last_name", t)}/>
-            <TextInput placeholder="Username" value={user.username} onChange={t=>change("username", t)}/>
-            <TextInput secureTextEntry={true} placeholder="Password" value={user.password} onChange={t=>change("password", t)}/>
+            <TextInput placeholder="Firstname" value={user.first_name} onChangeText={t=>change("first_name", t)}/>
+            <TextInput placeholder="Lastname" value={user.last_name} onChangeText={t=>change("last_name", t)}/>
+            <TextInput placeholder="Username" value={user.username} onChangeText={t=>change("username", t)}/>
+            <TextInput secureTextEntry={true} placeholder="Password" value={user.password} onChangeText={t=>change("password", t)}/>
             <TextInput secureTextEntry={true} placeholder="Confirm Password"/>
             <TouchableOpacity onPress={picker}>
                 <Text>Avatar</Text>
