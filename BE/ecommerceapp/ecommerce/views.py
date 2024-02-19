@@ -5,6 +5,7 @@ from ecommerce import serializers, paginators
 from rest_framework.decorators import action
 from .models import *
 from .permission import StoreOwnerPermission
+
 # from permission import OwnerAuthenticated
 
 
@@ -32,6 +33,7 @@ class CategoryViewSet(viewsets.ViewSet, generics.ListAPIView):
 
         return Response(serializers.ProductSerializer(products, many=True, context={'request': request}).data,
                         status=status.HTTP_200_OK)
+
 
 
 class ProductViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveUpdateDestroyAPIView, generics.CreateAPIView):
@@ -72,7 +74,7 @@ class ProductViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveUp
     @action(methods=['post'], detail=True)
     def add_comments(self, request, pk):
         c = Comment.objects.create(user=request.user, product=self.get_object(),
-                                  content=request.data.get('content'))
+                                   content=request.data.get('content'))
 
         return Response(serializers.CommentSerializer(c).data,
                         status=status.HTTP_201_CREATED)
@@ -105,7 +107,7 @@ class StoreViewSet(viewsets.ViewSet, generics.RetrieveAPIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-      
+
     @action(methods=['get'], detail=True)
     def products(self, request, pk):
         products = self.get_object().product_set.filter(active=True).all()

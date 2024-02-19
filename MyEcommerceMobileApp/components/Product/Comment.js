@@ -2,6 +2,8 @@ import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, Image } fro
 import React from 'react'
 import Apis, { authApi, endpoints } from '../../configs/Apis';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import moment from 'moment';
+import 'moment/locale/vi';
 
 const Comment = ({ route }) => {
     const [content, setContent] = React.useState('');
@@ -50,7 +52,6 @@ const Comment = ({ route }) => {
         <View>
             <Text>Bình luận</Text>
             <View className="p-1">
-
                 <TextInput value={content} onChangeText={(t) => setContent(t)}
                     className="border-2	border-slate-300 p-4"
                     placeholder="Nhập văn bản">
@@ -66,14 +67,15 @@ const Comment = ({ route }) => {
                     <Text className="text-center text-red-500 p-4 text-2xl">Chưa có đánh giá</Text>
                 ) : (
                     comment.map((r) => (
-                        <View className="border-b-2 pr-4 mr-2" >
-                            <View key={r.id} className="flex-row p-4">
+                        <View key={r.id} className="border-b-2 pr-4 mr-2" >
+                            <View  className="flex-row p-4">
                                 <Image
                                     source={{ uri: addCloudinaryDomain(r.user.avatar) }}
                                     style={{ width: 50, height: 50, borderRadius: 150 }}
                                 />
                                 <View className="ml-2">
                                     <Text className="ms-4">{r.user.username}</Text>
+                                    <Text locale="vi" className="ms-4">{moment(r.created_date).locale('vi').fromNow()}</Text>
                                     <Text className="text-base">{r.content}</Text>
                                 </View>
                             </View>
