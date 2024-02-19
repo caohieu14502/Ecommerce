@@ -26,8 +26,8 @@ const App = () => {
         <SafeAreaProvider>
             <MyContext.Provider value={[user, dispatch]}>
                 <NavigationContainer>
-                    <Tab.Navigator initialRouteName={Home}
-                        screenOptions={{ headerShown: false }}
+                    <Tab.Navigator initialRouteName={Store}
+                        screenOptions={{ headerShown: false }} backBehavior={"history"}
                     >
                         <Tab.Screen name="Home" component={Home} options={{
                             tabBarActiveTintColor: base_color,

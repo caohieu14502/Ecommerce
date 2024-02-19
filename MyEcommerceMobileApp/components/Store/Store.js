@@ -8,7 +8,7 @@ import { Entypo } from '@expo/vector-icons';
 import Category from './Category';
 import CardItem from '../Share/CardItem';
 import Filter from '../Share/Filter';
-
+import Review from './Review';
 
 const Store = ({ route, navigation }) => {
   const [selectedCategory, setSelectedCategory] = React.useState('Sản phẩm');
@@ -49,7 +49,6 @@ const Store = ({ route, navigation }) => {
 
     const loadProductStore = async () => {
       let url = endpoints["products-store"](storeId);
-
 
       if (order !== undefined && order !== null && searchQuery !== undefined && searchQuery !== null)
         url = `${url}?order=${order}&q=${searchQuery}`;
@@ -192,6 +191,12 @@ const Store = ({ route, navigation }) => {
                   <Category key={category.id} category={category} storeId={storeId} navigation={navigation} />
                 ))
               )}
+            </ScrollView>
+          )}
+
+          {selectedCategory === 'Review' && (
+            <ScrollView>
+              <Review route={route}/>
             </ScrollView>
           )}
 
