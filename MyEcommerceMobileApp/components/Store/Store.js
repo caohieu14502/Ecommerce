@@ -1,9 +1,7 @@
 import { View, Text, ActivityIndicator, StyleSheet, ScrollView, Image, TouchableOpacity } from 'react-native'
-import React, {  useContext, useReducer } from 'react'
+import React from 'react'
 import Apis, { endpoints } from '../../configs/Apis';
 import { Ionicons } from '@expo/vector-icons';
-import MyContext from '../../configs/MyContext';
-import MyUserReducer from '../../reducers/MyUserReducer';
 import SearchComponent from '../Share/Search';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Entypo } from '@expo/vector-icons';
@@ -15,7 +13,6 @@ import Filter from '../Share/Filter';
 const Store = ({ route, navigation }) => {
   const [selectedCategory, setSelectedCategory] = React.useState('Sản phẩm');
   const [store, setStore] = React.useState(null);
-  const [user, dispatch] = useContext(MyContext)
 
   // let views;
   const [productStore, setProductStore] = React.useState(null);
@@ -24,6 +21,10 @@ const Store = ({ route, navigation }) => {
   const data = ['Sản phẩm', 'Danh mục', 'Review'];
   const { storeId, sortBy, order } = route.params;
   const [searchQuery, setSearchQuery] = React.useState('');
+
+  // có chỗ if else cho người dùng là chủ store nữa. chủ store có thể có nút thêm sửa xóa các sp
+  // sửa xóa sp sẽ làm ngay trên component Product luôn
+  // thêm sp sẽ ở Store
 
   React.useEffect(() => {
     const loadStore = async () => {
