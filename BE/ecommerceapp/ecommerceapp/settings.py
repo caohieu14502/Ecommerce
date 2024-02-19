@@ -30,7 +30,7 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760
 CORS_ORIGIN_ALLOW_ALL = True
 
 ALLOWED_HOSTS = [
-    'http://192.168.1.12:8081', '192.168.1.12'
+    'http://192.168.1.12:8081', '192.168.1.12', '192.168.100.10', '127.0.0.1', '*', 'localhost'
 ]
 
 CORS_ALLOW_METHODS = [
@@ -159,6 +159,9 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# 'jh0EnJFe2uGzTc3kY7kbLHtUgW7NILwkcY9dpt17'
+# 'GCUhrDHUFqnGiXGXBSrHV2V0Ip3vBoKSL4xoIVa4eLrNPNG64sptXUoEZqF91KBWHCLFJOEbR1SWDENVPzqXARDR24IpprelYyjWmsPOvWkmtzUe21VY3qRYPEWBRqs1'
 OAUTH2_PROVIDER = {
     'OAUTH2_BACKEND_CLASS': 'oauth2_provider.oauth2_backends.JSONOAuthLibCore'
 }
