@@ -61,7 +61,8 @@ class Order(models.Model):
 class OrderDetail(models.Model):
     unit_price = models.DecimalField(max_digits=12, decimal_places=2, null=False)
     quantity = models.IntegerField()
-    order = models.ForeignKey(Order, on_delete=models.RESTRICT)
+    order = (models.ForeignKey
+             (Order, on_delete=models.RESTRICT))
     product = models.ForeignKey(Product, on_delete=models.RESTRICT)
 
 
@@ -74,7 +75,6 @@ class Interaction(BaseModel):
 
 class Comment(Interaction):
     content = models.CharField(max_length=100, null=False)
-    create_date = models.DateField(auto_now=True)
     product = models.ForeignKey(Product, on_delete=models.RESTRICT)
 
 

@@ -1,4 +1,4 @@
-from .models import Category, Product, User, Store
+from .models import Category, Product, User, Store, Review, Comment
 from rest_framework import serializers
 
 
@@ -9,10 +9,9 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = User
-        fields = ['username', 'password', 'avatar']
+        fields = ['id', 'username', 'password', 'avatar']
         extra_kwargs = {
             'password': {
                 'write_only': True
@@ -53,3 +52,19 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = ['id', 'name', 'price', 'image', 'description', 'category', 'store']
+
+
+class ReviewSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+
+    class Meta:
+        model = Review
+        fields = ['id', 'created_date', 'star', 'note', 'user']
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+
+    class Meta:
+        model = Comment
+        fields = ['id', 'created_date', 'content', 'user']

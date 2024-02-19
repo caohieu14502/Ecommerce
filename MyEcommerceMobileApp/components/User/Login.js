@@ -3,48 +3,44 @@ import MyStyles from "../../styles/MyStyles"
 import { useContext, useState } from "react"
 import MyContext from "../../configs/MyContext"
 import Apis, { authApi, endpoints } from "../../configs/Apis"
+import AsyncStorage from "@react-native-async-storage/async-storage"
 
-const Login = ({navigation}) => {
-    const [username, setUsername] = useState()
-    const [password, setPassword] = useState()
-    const [user, dispatch] = useContext(MyContext)
+const Login = ({ navigation }) => {
+    const [username, setUsername] = useState();
+    const [password, setPassword] = useState();
+    const [loading, setLoading] = useState(false);
+    const [user, dispatch] = useContext(MyContext);
 
     const login = async () => {
-        let reqData = {
-            "username": username,
-            "password": password,
-            "client_id": "0GO8rhubZGnijL7lkTotNAZrd9atmSEwoleQjElS",
-            "client_secret": "4PdBtWJS6MspG889cAbXGPhABMVhYyPFU01lx3Wasr6XTY5Y1k41jD4wKM2NQYW0U1rMyQXzeNcewkZoMcciuffxJSI5xnv3i3xzS5wWwbcokNzEXKMDXSFHUtRUO9Tq",
-            "grant_type": "password",
-            "withCredentials": "true"
-        }
-        data = Object.keys(reqData).map(function(key) {
-            return encodeURIComponent(key) + '=' + encodeURIComponent(reqData[key])
-        }).join('&')
+        setLoading(true);
 
         try {
-            let res = await Apis.post(endpoints["login"], data);
-            let user = await authApi(res.data.access_token).get(endpoints["current-user"])
-            dispatch({
-                "type": "login",
-                "payload": user.data
+            let res = await Apis.post(endpoints['login'], {
+                "username": username,
+                "password": password,
+                "client_id": "Gz8MgPSlyWzCHrXn1BZaow4qddpzab3i0QWNmSJz",
+                "client_secret": "2r7CGvoBBFuCmqqM6fbThAPtYOoykchi8z85djQ2IQwgpvbjNCjn4SGbX2xLkcB1wvaZRDizuSLa9Oo22UGPRgKwmFMIn0MY6t10bIanZ11aEH97TRDJoTRLJXMCVUN0",
+                "grant_type": "password"
             });
-
-            console.log(user.data)
-
-            navigation.navigate("Home")
+            await AsyncStorage.setItem('access-token', res.data.access_token )
+            let user = await authApi(res.data.access_token).get(endpoints['current-user']);
+            dispatch({
+                type: "login",
+                payload: user.data
+            });
+            navigation.navigate("Home");
         } catch (ex) {
-            console.error(ex)
+            console.error(ex);
+        } finally {
+            setLoading(false);
         }
-
     }
 
-
-    return(
+    return (
         <View style={MyStyles.container}>
             <Text>Login</Text>
-            <TextInput value={username} onChangeText={t => setUsername(t)} placeholder="Username"/>
-            <TextInput value={password} onChangeText={t => setPassword(t)} secureTextEntry={true} placeholder="Password"/>
+            <TextInput value={username} onChangeText={t => setUsername(t)} placeholder="Username" />
+            <TextInput value={password} onChangeText={t => setPassword(t)} secureTextEntry={true} placeholder="Password" />
             <TouchableOpacity onPress={login}>
                 <Text>Login</Text>
             </TouchableOpacity>

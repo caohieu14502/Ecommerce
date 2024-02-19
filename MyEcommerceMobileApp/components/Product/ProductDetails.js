@@ -4,9 +4,10 @@ import Apis, { endpoints } from '../../configs/Apis';
 import { Ionicons } from '@expo/vector-icons';
 import RenderHTML from 'react-native-render-html';
 import { Entypo } from '@expo/vector-icons';
+import Comment from './Comment';
 
 const ProductDetails = ({ route, navigation }) => {
-  const productId = route.params?.productId;
+  const { productId } = route.params;
   const [product, setProduct] = React.useState(null);
   const windowDimensions = useWindowDimensions();
 
@@ -90,7 +91,10 @@ const ProductDetails = ({ route, navigation }) => {
         <Text className="font-normal">Mô tả sản phẩm</Text>
         <RenderHTML tagsStyles={tagsStyles} source={{ html: product.description }} contentWidth={windowDimensions.width} />
       </View>
+      <View className="bg-white p-4 mt-2">
+      <Comment route={route} />
 
+      </View>
     </ScrollView>
   );
 };
