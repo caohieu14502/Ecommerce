@@ -4,9 +4,10 @@ from ecommerce import views, admin
 
 router = routers.DefaultRouter()
 router.register('categories', views.CategoryViewSet, basename='categories')
-router.register('store', views.StoreViewSet, basename='store')
+router.register('stores', views.StoreViewSet, basename='stores')
 router.register('products', views.ProductViewSet, basename='products')
-router.register('users', views.UserViewSet, basename='user')
+router.register('users', views.UserViewSet, basename='users')
+router.register('payment', views.ReceiptViewSet, basename='payment')
 
 
 urlpatterns = [

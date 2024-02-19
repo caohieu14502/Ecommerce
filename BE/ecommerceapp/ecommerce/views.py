@@ -1,8 +1,10 @@
+from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework import viewsets, generics, parsers, permissions, status
 from ecommerce import serializers, paginators
 from rest_framework.decorators import action
 from .models import *
+from .permission import StoreOwnerPermission
 
 
 class CategoryViewSet(viewsets.ViewSet, generics.ListAPIView):
@@ -37,7 +39,7 @@ class CategoryViewSet(viewsets.ViewSet, generics.ListAPIView):
     #                     status=status.HTTP_200_OK)
 
 
-class ProductViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPIView):
+class ProductViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveUpdateDestroyAPIView, generics.CreateAPIView):
     queryset = Product.objects.all().order_by('?')
     serializer_class = serializers.ProductSerializer
     pagination_class = paginators.ProductPaginator
@@ -55,11 +57,21 @@ class ProductViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAP
 
         return queries
 
+    def get_permissions(self):
+        if self.action == "retrieve":
+            return [permissions.AllowAny()]
+        return [StoreOwnerPermission()]
+
+    def get_object(self):
+        obj = get_object_or_404(self.get_queryset(), pk=self.kwargs["pk"])
+        self.check_object_permissions(self.request, obj)
+        return obj
+
 
 class StoreViewSet(viewsets.ViewSet, generics.RetrieveAPIView):
     queryset = Store.objects.all()
     serializer_class = serializers.StoreSerializer
-    permission_classes = [permissions.IsAuthenticated()]
+    permission_classes = [permissions.IsAuthenticated]
 
     @action(methods=['get'], detail=True)
     def categories(self, request, pk):
@@ -92,3 +104,32 @@ class UserViewSet(viewsets.ViewSet, generics.CreateAPIView):
     def current_user(self, request):
         return Response(serializers.UserSerializer(request.user).data)
 
+
+class ReceiptViewSet(viewsets.ViewSet):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def create(self, request):
+        # # Tao Order
+        # o = Order()
+        # o.user = request.user
+        # o.save()
+        # # Loop Request tao ra cac receipt(OrderDetail), moi detail co id gan vao Order
+        # for order_detail in request.data:
+        #     od = OrderDetail()
+        #     od.order = o
+        #     od.product = Product.objects.get(order_detail["product_id"])
+        #     od.quantity = order_detail["quantity"]
+        #     od.unit_price = order_detail["unit_price"]
+        #     od.save()
+
+        # user = self.get_object()
+        serialized = serializers.OrderDetailSerializer(data=request.data, many=True, context={'user': request.user})
+        if serialized.is_valid():
+            # for item in serialized.validated_data:
+            #     item.order(serialized.validated_data['password'])
+            #     user.save()
+            serialized.save()
+            return Response({'status': 'Pay successfully'}, status=status.HTTP_200_OK, )
+        else:
+            return Response(serialized.errors,
+                            status=status.HTTP_400_BAD_REQUEST)

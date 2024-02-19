@@ -1,4 +1,6 @@
-from .models import Category, Product, User, Store
+from rest_framework.generics import get_object_or_404
+
+from .models import Category, Product, User, Store, OrderDetail
 from rest_framework import serializers
 
 
@@ -16,17 +18,20 @@ class UserSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'password': {
                 'write_only': True
+            },
+            'store': {
+                'read_only': True
             }
         }
 
-        def create(self, validated_data):
-            data = validated_data.copy()
+    def create(self, validated_data):
+        data = validated_data.copy()
 
-            user = User(**data)
-            user.set_password(data['password'])
-            user.save()
+        user = User(**data)
+        user.set_password(data['password'])
+        user.save()
 
-            return user
+        return user
 
 
 class StoreSerializer(serializers.ModelSerializer):
@@ -52,6 +57,8 @@ class StoreSerializer(serializers.ModelSerializer):
         return post
 
 
+
+
 class ProductSerializer(serializers.ModelSerializer):
     image = serializers.SerializerMethodField(source='image')
     category = CategorySerializer()
@@ -68,3 +75,33 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = ['id', 'name', 'price', 'image', 'description', 'category', 'store']
+
+
+class OrderDetailListSerializer(serializers.ListSerializer):
+    def create(self, validated_data):
+        try:
+            o = Order()
+            o.user = self.context.get('user')
+            o.save()
+            ods = []
+            for item in validated_data:
+                print(item)
+                od = OrderDetail(**item)
+                od.product = Product.objects.get(item["product"])
+                od.order(o)
+                ods.append(od)
+            return OrderDetail.objects.bulk_create(ods)
+        except:
+            return None
+
+
+
+class OrderDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrderDetail
+        fields = ['quantity', 'unit_price', 'product']
+        list_serializer_class = OrderDetailListSerializer
+
+    # Dung context de lay Product Id va tao Order o ben View
+    def create(self, validated_data):
+        pass
