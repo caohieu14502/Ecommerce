@@ -3,6 +3,8 @@ import React from 'react'
 import Apis, { authApi, endpoints } from '../../configs/Apis';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import FilterReview from './FilterReivew';
+import moment from 'moment';
+import 'moment/locale/vi';
 
 const Review = ({ route, navigation }) => {
     const [rating, setRating] = React.useState(5);
@@ -96,7 +98,9 @@ const Review = ({ route, navigation }) => {
                             <View key={r.id} className="flex-row p-4">
                                 <Image
                                     source={{ uri: addCloudinaryDomain(r.user.avatar) }}
-                                    style={{ width: 50, height: 50, borderRadius: 150 }}
+                                    style={{
+                                        width: 50, height: 50, borderRadius: 150, resizeMode: 'cover',
+                                    }}
                                 />
                                 <View className="ml-2">
                                     <Text className="ms-4">{r.user.username}</Text>
@@ -110,6 +114,7 @@ const Review = ({ route, navigation }) => {
                                             </Text>
                                         ))}
                                     </View>
+                                    <Text locale="vi" className="ms-4">{moment(r.created_date).locale('vi').fromNow()}</Text>
                                     <Text className="text-base">{r.note}</Text>
                                 </View>
                             </View>

@@ -93,7 +93,9 @@ const ProductDetails = ({ route, navigation }) => {
       </View>
       <View className="bg-white p-4 mt-2">
       <Comment route={route} />
-
+      <View>
+        <Text>Có thể bạn cũng thích</Text>
+      </View>
       </View>
     </ScrollView>
   );
