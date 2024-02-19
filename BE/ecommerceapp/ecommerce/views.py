@@ -6,7 +6,6 @@ from rest_framework.decorators import action
 from .models import *
 from .permission import StoreOwnerPermission
 
-
 # from permission import OwnerAuthenticated
 
 
@@ -36,8 +35,8 @@ class CategoryViewSet(viewsets.ViewSet, generics.ListAPIView):
                         status=status.HTTP_200_OK)
 
 
-class ProductViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveUpdateDestroyAPIView,
-                     generics.CreateAPIView):
+
+class ProductViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveUpdateDestroyAPIView, generics.CreateAPIView):
     queryset = Product.objects.all().order_by('?')
     serializer_class = serializers.ProductSerializer
     pagination_class = paginators.ProductPaginator
@@ -174,7 +173,6 @@ class UserViewSet(viewsets.ViewSet, generics.CreateAPIView):
     def current_user(self, request):
         return Response(serializers.UserSerializer(request.user).data)
 
-
 class ReceiptViewSet(viewsets.ViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -203,3 +201,4 @@ class ReceiptViewSet(viewsets.ViewSet):
         else:
             return Response(serialized.errors,
                             status=status.HTTP_400_BAD_REQUEST)
+

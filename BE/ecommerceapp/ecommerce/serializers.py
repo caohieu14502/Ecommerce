@@ -1,4 +1,5 @@
-from .models import Category, Product, User, Store, Review, Comment
+from rest_framework.generics import get_object_or_404
+from .models import Category, Product, User, Store, Review, Comment, OrderDetail
 from rest_framework import serializers
 
 
@@ -11,29 +12,50 @@ class CategorySerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'password', 'avatar']
+        fields = ['username', 'password', 'avatar', 'store', 'user_role', 'status']
+
         extra_kwargs = {
             'password': {
                 'write_only': True
+            },
+            'store': {
+                'read_only': True
             }
         }
 
-        def create(self, validated_data):
-            data = validated_data.copy()
+    def create(self, validated_data):
+        data = validated_data.copy()
 
-            user = User(**data)
-            user.set_password(data['password'])
-            user.save()
+        user = User(**data)
+        user.set_password(data['password'])
+        user.save()
 
-            return user
+        return user
 
 
 class StoreSerializer(serializers.ModelSerializer):
-    user = UserSerializer()
 
     class Meta:
         model = Store
-        fields = ['id', 'name', 'description', 'location', 'user']
+        fields = ['id', 'name', 'description', 'location']
+
+    def create(self, validated_data):
+        request = self.context.get("request")
+
+        user = User.objects.get(pk=request.user.pk)
+        user.save()
+
+        post = Store()
+        post.name = validated_data['name']
+        post.description = validated_data['description']
+        post.location = validated_data['location']
+        post.user = request.user
+
+        post.save()
+
+        return post
+
+
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -53,6 +75,35 @@ class ProductSerializer(serializers.ModelSerializer):
         model = Product
         fields = ['id', 'name', 'price', 'image', 'description', 'category', 'store']
 
+
+class OrderDetailListSerializer(serializers.ListSerializer):
+    def create(self, validated_data):
+        try:
+            o = Order()
+            o.user = self.context.get('user')
+            o.save()
+            ods = []
+            for item in validated_data:
+                print(item)
+                od = OrderDetail(**item)
+                od.product = Product.objects.get(item["product"])
+                od.order(o)
+                ods.append(od)
+            return OrderDetail.objects.bulk_create(ods)
+        except:
+            return None
+
+
+
+class OrderDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrderDetail
+        fields = ['quantity', 'unit_price', 'product']
+        list_serializer_class = OrderDetailListSerializer
+
+    # Dung context de lay Product Id va tao Order o ben View
+    def create(self, validated_data):
+        pass
 
 class ReviewSerializer(serializers.ModelSerializer):
     user = UserSerializer()

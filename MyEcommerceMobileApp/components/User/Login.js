@@ -12,7 +12,17 @@ const Login = ({ navigation }) => {
     const [user, dispatch] = useContext(MyContext);
 
     const login = async () => {
-        setLoading(true);
+        let reqData = {
+            "username": username,
+            "password": password,
+            "client_id": "jh0EnJFe2uGzTc3kY7kbLHtUgW7NILwkcY9dpt17",
+            "client_secret": "GCUhrDHUFqnGiXGXBSrHV2V0Ip3vBoKSL4xoIVa4eLrNPNG64sptXUoEZqF91KBWHCLFJOEbR1SWDENVPzqXARDR24IpprelYyjWmsPOvWkmtzUe21VY3qRYPEWBRqs1",
+            "grant_type": "password",
+            "withCredentials": "true"
+        }
+        data = Object.keys(reqData).map(function(key) {
+            return encodeURIComponent(key) + '=' + encodeURIComponent(reqData[key])
+        }).join('&')
 
         try {
             let res = await Apis.post(endpoints['login'], {

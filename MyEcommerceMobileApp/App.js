@@ -10,18 +10,18 @@ import Store from "./components/Store/Store";
 import Login from './components/User/Login';
 import MyUserReducer from './reducers/MyUserReducer';
 import MyContext from './configs/MyContext';
-import Logout from './components/User/Logout';
-import User from './components/User/User';
-import Register from './components/User/Register';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Feather } from '@expo/vector-icons';
+import Profiles from "./components/User/Profiles";
 import Product from "./components/Store/Product";
 
 
 const Tab = createBottomTabNavigator();
 
 const App = () => {
+    var base_color = "#ff5722"
     const [user, dispatch] = useReducer(MyUserReducer, null)
+    console.log(`App: ${user}`)
     return (
         <SafeAreaProvider>
             <MyContext.Provider value={[user, dispatch]}>
@@ -30,21 +30,36 @@ const App = () => {
                         screenOptions={{ headerShown: false }} backBehavior={"history"}
                     >
                         <Tab.Screen name="Home" component={Home} options={{
-                            tabBarIcon: () => (     
-                                <Feather name="home" size={24} color="black" />
-                            ),
+                            tabBarActiveTintColor: base_color,
+                            tabBarIcon: ({color}) => (
+                                <Feather name="home" size={24} color={color}/>
+                            ), 
+                        }} />
+                        <Tab.Screen name="Categories" component={Cate} options={{
+                            tabBarActiveTintColor: base_color,
+                            tabBarIcon: ({color}) => (
+                                <Feather name="database" size={24} color={color}/>
+                            ), 
                         }} />
                         {user === null ? <>
-                            <Tab.Screen name='Login' component={Login} options={{ title: "Login" }} />
-                            <Tab.Screen name='Res' component={Register} options={{ title: "Register" }} />
+                            <Tab.Screen name='Login' component={Login} options={{ title: "Profiles", 
+                            tabBarActiveTintColor: base_color,
+                            tabBarIcon: ({color}) => (
+                                <Feather name="user" size={24} color={color}/>
+                            ), 
+                        }} />
                         </> : <>
-                            <Tab.Screen name="User" component={User} options={{ title: user.username }} />
-                            <Tab.Screen name="Logout" component={Logout} />
+                            {/* <Tab.Screen name="User" component={User} options={{ title: user.username }} />
+                            <Tab.Screen name="Logout" component={Logout} /> */}
+                            <Tab.Screen name="Profiles" component={Profiles} options={{
+                            tabBarActiveTintColor: base_color,
+                            tabBarIcon: ({color}) => (
+                                <Feather name="user" size={24} color={color}/>
+                            ), 
+                        }} />
                         </>}
 
-                        <Tab.Screen name="Cate" component={Cate} options={{
-                            tabBarItemStyle: { display: "none" }
-                        }} />
+
                         <Tab.Screen name="CardItem" component={CardItem} options={{
                             tabBarItemStyle: { display: "none" }
                         }} />
@@ -65,3 +80,5 @@ const App = () => {
 };
 
 export default App;
+
+style = {tabBarActiveBackgroundColor: "#ff5722"}
