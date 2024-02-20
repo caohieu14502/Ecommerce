@@ -12,27 +12,19 @@ import Review from './Review';
 
 const Store = ({ route, navigation }) => {
   const [selectedCategory, setSelectedCategory] = React.useState('Sản phẩm');
-  const [store, setStore] = React.useState(null);
-
-  // let views;
+  const [searchQuery, setSearchQuery] = React.useState('');
   const [productStore, setProductStore] = React.useState(null);
   const [categoryStore, setCategoryStore] = React.useState(null);
+  const [store, setStore] = React.useState(null);
   const insets = useSafeAreaInsets();
   const data = ['Sản phẩm', 'Danh mục', 'Review'];
   const { storeId, sortBy, order } = route.params;
-  const [searchQuery, setSearchQuery] = React.useState('');
-
-  // có chỗ if else cho người dùng là chủ store nữa. chủ store có thể có nút thêm sửa xóa các sp
-  // sửa xóa sp sẽ làm ngay trên component Product luôn
-  // thêm sp sẽ ở Store
 
   React.useEffect(() => {
     const loadStore = async () => {
       try {
-        const res = await Apis.get(endpoints['store'](user.store));
-        let user = await authApi(res.data.access_token).get(endpoints["current-user"])
+        const res = await Apis.get(endpoints['store'](storeId));
         setStore(res.data);
-        console.error(res.data);
       } catch (error) {
         console.error(error);
       }
@@ -79,7 +71,7 @@ const Store = ({ route, navigation }) => {
   const handleGoBack = () => {
     navigation.goBack();
   };
-  
+
   const handleSearch = (searchText) => {
     setSearchQuery(searchText);
   };
@@ -196,7 +188,7 @@ const Store = ({ route, navigation }) => {
 
           {selectedCategory === 'Review' && (
             <ScrollView>
-              <Review route={route}/>
+              <Review route={route} navigation={navigation} />
             </ScrollView>
           )}
 

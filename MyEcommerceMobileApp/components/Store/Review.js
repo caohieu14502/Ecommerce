@@ -5,12 +5,15 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import FilterReview from './FilterReivew';
 import moment from 'moment';
 import 'moment/locale/vi';
+import MyContext from "../../configs/MyContext";
+import { useContext } from "react";
 
 const Review = ({ route, navigation }) => {
     const [rating, setRating] = React.useState(5);
     const { storeId, star } = route.params;
     const [reviews, setReview] = React.useState([]);
     const [note, setNote] = React.useState([]);
+    const [user, dispatch] = useContext(MyContext)
 
     React.useEffect(() => {
         const loadReview = async () => {
@@ -59,33 +62,42 @@ const Review = ({ route, navigation }) => {
 
     return (
         <View>
-            <View className="flex-row justify-center ">
-                {[1, 2, 3, 4, 5].map((value) => (
-                    <Text
-                        className="text-4xl px-4 "
-                        key={value}
-                        value={value}
-                        onPress={() => handleRatingClick(value)}
-                        style={{
-                            color: value <= rating ? 'gold' : 'black',
-                        }}
-                    >
-                        ★
-                    </Text>
-                ))}
-            </View>
-
-            <View className="p-1">
-
-                <TextInput value={note} onChangeText={(t) => setNote(t)}
-                    className="border-2	border-slate-300 p-4"
-                    placeholder="Nhập văn bản">
-                </TextInput>
-
-                <TouchableOpacity className="my-2 " style={{ width: 100, }} onPress={addReview}>
-                    <Text className="bg-orange-400 p-4 ">Đánh giá</Text>
+            {user === null ? (
+                <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+                    <Text>Đăng nhập để đánh giá</Text>
                 </TouchableOpacity>
-            </View>
+            ) : (
+                <View>
+                    <View className="flex-row justify-center ">
+                        {[1, 2, 3, 4, 5].map((value) => (
+                            <Text
+                                className="text-4xl px-4 "
+                                key={value}
+                                value={value}
+                                onPress={() => handleRatingClick(value)}
+                                style={{
+                                    color: value <= rating ? 'gold' : 'black',
+                                }}
+                            >
+                                ★
+                            </Text>
+                        ))}
+                    </View>
+                    <View className="p-1">
+                        <TextInput value={note} onChangeText={(t) => setNote(t)}
+                            className="border-2	border-slate-300 p-4"
+                            placeholder="Nhập văn bản">
+                        </TextInput>
+
+                        <TouchableOpacity className="my-2 " style={{ width: 100, }} onPress={addReview}>
+                            <Text className="bg-orange-400 p-4 ">Đánh giá</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            )}
+
+
+
 
             <FilterReview route={route} />
 

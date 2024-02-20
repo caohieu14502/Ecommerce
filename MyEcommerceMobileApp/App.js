@@ -14,6 +14,11 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Feather } from '@expo/vector-icons';
 import Profiles from "./components/User/Profiles";
 import Product from "./components/Store/Product";
+import Review from "./components/Store/Review";
+import Comment from "./components/Product/Comment";
+import Register from "./components/User/Register";
+import RegisterStore from "./components/User/RegisterStore";
+import Logout from "./components/User/Logout";
 
 
 const Tab = createBottomTabNavigator();
@@ -31,35 +36,31 @@ const App = () => {
                     >
                         <Tab.Screen name="Home" component={Home} options={{
                             tabBarActiveTintColor: base_color,
-                            tabBarIcon: ({color}) => (
-                                <Feather name="home" size={24} color={color}/>
-                            ), 
+                            tabBarIcon: ({ color }) => (
+                                <Feather name="home" size={24} color={color} />
+                            ),
                         }} />
                         <Tab.Screen name="Categories" component={Cate} options={{
                             tabBarActiveTintColor: base_color,
-                            tabBarIcon: ({color}) => (
-                                <Feather name="database" size={24} color={color}/>
-                            ), 
+                            tabBarIcon: ({ color }) => (
+                                <Feather name="database" size={24} color={color} />
+                            ),
                         }} />
-                        {user === null ? <>
-                            <Tab.Screen name='Login' component={Login} options={{ title: "Profiles", 
+                        <Tab.Screen name='Profiles' component={Profiles} options={{ title: "Profiles", 
                             tabBarActiveTintColor: base_color,
                             tabBarIcon: ({color}) => (
                                 <Feather name="user" size={24} color={color}/>
                             ), 
                         }} />
-                        </> : <>
-                            {/* <Tab.Screen name="User" component={User} options={{ title: user.username }} />
-                            <Tab.Screen name="Logout" component={Logout} /> */}
-                            <Tab.Screen name="Profiles" component={Profiles} options={{
-                            tabBarActiveTintColor: base_color,
-                            tabBarIcon: ({color}) => (
-                                <Feather name="user" size={24} color={color}/>
-                            ), 
+                        <Tab.Screen name="Logout" component={Logout} options={{
+                            tabBarItemStyle: { display: "none" }
                         }} />
-                        </>}
-
-
+                        <Tab.Screen name="Login" component={Login} options={{
+                            tabBarItemStyle: { display: "none" }
+                        }} />
+                        <Tab.Screen name="RegisterStore" component={RegisterStore} options={{
+                            tabBarItemStyle: { display: "none" }
+                        }} />
                         <Tab.Screen name="CardItem" component={CardItem} options={{
                             tabBarItemStyle: { display: "none" }
                         }} />
@@ -72,6 +73,12 @@ const App = () => {
                         <Tab.Screen name="Product" component={Product} options={{
                             tabBarItemStyle: { display: "none" }
                         }} />
+                        <Tab.Screen name="Review" component={Review} options={{
+                            tabBarItemStyle: { display: "none" }
+                        }} />
+                        <Tab.Screen name="Comment" component={Comment} options={{
+                            tabBarItemStyle: { display: "none" }
+                        }} />
                     </Tab.Navigator>
                 </NavigationContainer>
             </MyContext.Provider>
@@ -81,4 +88,4 @@ const App = () => {
 
 export default App;
 
-style = {tabBarActiveBackgroundColor: "#ff5722"}
+style = { tabBarActiveBackgroundColor: "#ff5722" }

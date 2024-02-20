@@ -1,12 +1,13 @@
 import { useContext } from "react"
 import { Button } from "react-native"
 import MyContext from "../../configs/MyContext"
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Logout = ({navigation}) => {
     const [user, dispatch] = useContext(MyContext);
 
-    const logout = () => {
-        
+    const logout = async() => {
+        await AsyncStorage.removeItem('access-token')
         dispatch({
             "type": "logout",
         })

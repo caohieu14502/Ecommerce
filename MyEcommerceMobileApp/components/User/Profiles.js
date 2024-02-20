@@ -16,12 +16,14 @@ const Profiles = ({navigation}) =>{
     // Check xem đã có chưa(đang là user hay store trong role) 
     // -> chưa(user) thì vào trang đăng kí
     // -> rồi(pending) thì báo đang chờ/đã hủy, có link đăng kí
+
+    
   const isRegistered = () => {
     if(user.user_role === "user") {
       if (user.status === "Pending") {
         <Text>Yêu cầu về cửa hàng của bạn đang được duyệt, vui lòng chờ!!!</Text>
       } else if(user.status === "") {// rỗng tức là chưa đăng kí
-        <TouchableOpacity onPress={() => navigation.navigate('StoreRegister')}>
+        <TouchableOpacity onPress={() => navigation.navigate('RegisterStore')}>
               <Text>Đăng kí Store</Text>
         </TouchableOpacity>
       }
@@ -36,12 +38,15 @@ const Profiles = ({navigation}) =>{
     return(<>
         <View style={styles.container}>
         <TouchableOpacity
-            onPress={() => navigation.navigate('Home')}>
-            <Text>Đến trang Home</Text>
+            onPress={() => navigation.navigate('RegisterStore')}>
+            <Text>Đến trang RegisterStore</Text>
         </TouchableOpacity>
         </View>
         <View style={styles.container}>
-
+        <TouchableOpacity
+            onPress={() => navigation.navigate('Login')}>
+            <Text>Login</Text>
+        </TouchableOpacity>
         </View>
 
         <View style={styles.container}>

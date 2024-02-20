@@ -6,6 +6,7 @@ from rest_framework.decorators import action
 from .models import *
 from .permission import StoreOwnerPermission
 
+
 # from permission import OwnerAuthenticated
 
 
@@ -35,8 +36,8 @@ class CategoryViewSet(viewsets.ViewSet, generics.ListAPIView):
                         status=status.HTTP_200_OK)
 
 
-
-class ProductViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveUpdateDestroyAPIView, generics.CreateAPIView):
+class ProductViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveUpdateDestroyAPIView,
+                     generics.CreateAPIView):
     queryset = Product.objects.all().order_by('?')
     serializer_class = serializers.ProductSerializer
     pagination_class = paginators.ProductPaginator
@@ -54,15 +55,15 @@ class ProductViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveUp
 
         return queries
 
-    def get_permissions(self):
-        if self.action == "retrieve":
-            return [permissions.AllowAny()]
-        return [StoreOwnerPermission()]
-
-    def get_object(self):
-        obj = get_object_or_404(self.get_queryset(), pk=self.kwargs["pk"])
-        self.check_object_permissions(self.request, obj)
-        return obj
+    # def get_permissions(self):
+    #     if self.action == "retrieve":
+    #         return [permissions.AllowAny()]
+    #     return [StoreOwnerPermission()]
+    #
+    # def get_object(self):
+    #     obj = get_object_or_404(self.get_queryset(), pk=self.kwargs["pk"])
+    #     self.check_object_permissions(self.request, obj)
+    #     return obj
 
     @action(methods=['get'], detail=True)
     def comments(self, request, pk):
@@ -80,10 +81,11 @@ class ProductViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveUp
                         status=status.HTTP_201_CREATED)
 
 
-class StoreViewSet(viewsets.ViewSet, generics.RetrieveAPIView):
+class StoreViewSet(viewsets.ViewSet, generics.RetrieveAPIView, generics.CreateAPIView):
     queryset = Store.objects.all()
     serializer_class = serializers.StoreSerializer
-    permission_classes = [permissions.IsAuthenticated]
+
+    # permission_classes = [permissions.IsAuthenticated]
 
     # permission_classes = [permissions.AllowAny]
 
@@ -92,6 +94,17 @@ class StoreViewSet(viewsets.ViewSet, generics.RetrieveAPIView):
     #         return [permissions.IsAuthenticated()]
     #
     #     return self.permission_classes
+    @action(methods=['post'], url_path='register-store', url_name='register-store', detail=False)
+    def register_store(self, request):
+        user = request.user
+        s = Store.objects.create(user = user,
+                                 name=request.data.get('name'),
+                                 description=request.data.get('description'),
+                                 location=request.data.get('location'))
+        user.status = 'pending'
+        user.save()
+        return Response(serializers.StoreSerializer(s).data,
+                        status=status.HTTP_201_CREATED)
 
     @action(methods=['get'], detail=True)
     def categories(self, request, pk):
@@ -99,14 +112,6 @@ class StoreViewSet(viewsets.ViewSet, generics.RetrieveAPIView):
 
         return Response(serializers.CategorySerializer(categories, many=True, context={'request': request}).data,
                         status=status.HTTP_200_OK)
-
-    @action(methods=['post'], url_path='register-store', url_name='register-store', detail=False)
-    def register_store(self, request):
-        serializer = serializers.StoreSerializer(data=request.data, context={'request': request})
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @action(methods=['get'], detail=True)
     def products(self, request, pk):
@@ -173,8 +178,9 @@ class UserViewSet(viewsets.ViewSet, generics.CreateAPIView):
     def current_user(self, request):
         return Response(serializers.UserSerializer(request.user).data)
 
+
 class ReceiptViewSet(viewsets.ViewSet):
-    permission_classes = [permissions.IsAuthenticated]
+    # permission_classes = [permissions.IsAuthenticated]
 
     def create(self, request):
         # # Tao Order
@@ -201,4 +207,3 @@ class ReceiptViewSet(viewsets.ViewSet):
         else:
             return Response(serialized.errors,
                             status=status.HTTP_400_BAD_REQUEST)
-

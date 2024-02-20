@@ -92,10 +92,10 @@ const ProductDetails = ({ route, navigation }) => {
         <RenderHTML tagsStyles={tagsStyles} source={{ html: product.description }} contentWidth={windowDimensions.width} />
       </View>
       <View className="bg-white p-4 mt-2">
-      <Comment route={route} />
-      <View>
-        <Text>Có thể bạn cũng thích</Text>
-      </View>
+        <Comment route={route} navigation={navigation} />
+        <View>
+          <Text>Có thể bạn cũng thích</Text>
+        </View>
       </View>
     </ScrollView>
   );

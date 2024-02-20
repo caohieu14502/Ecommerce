@@ -5,8 +5,8 @@ from django.db import models
 
 
 class BaseModel(models.Model):
-    created_date = models.DateField(auto_now_add=True, null=True)
-    updated_date = models.DateField(auto_now=True, null=True)
+    created_date = models.DateTimeField (auto_now_add=True, null=True)
+    updated_date = models.DateTimeField (auto_now=True, null=True)
     active = models.BooleanField(default=True)
 
     class Meta:
@@ -14,8 +14,8 @@ class BaseModel(models.Model):
 
 
 class User(AbstractUser):
-    user_role = models.ForeignKey(Group, on_delete=models.RESTRICT, default=1, related_name='user_role')
-    status = models.CharField(max_length=50, null=False)
+    user_role = models.ForeignKey(Group, on_delete=models.RESTRICT, default=2, related_name='user_role')
+    status = models.CharField(max_length=50, null=True)
     avatar = CloudinaryField('avatar', null=True)
 
     def __str__(self):

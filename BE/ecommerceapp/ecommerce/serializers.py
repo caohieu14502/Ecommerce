@@ -12,13 +12,16 @@ class CategorySerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['username', 'password', 'avatar', 'store', 'user_role', 'status']
+        fields = ['username', 'password', 'last_name', 'first_name', 'avatar', 'store', 'user_role', 'status']
 
         extra_kwargs = {
             'password': {
                 'write_only': True
             },
             'store': {
+                'read_only': True
+            },
+            'status': {
                 'read_only': True
             }
         }
@@ -34,7 +37,6 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class StoreSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Store
         fields = ['id', 'name', 'description', 'location']
@@ -54,8 +56,6 @@ class StoreSerializer(serializers.ModelSerializer):
         post.save()
 
         return post
-
-
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -78,21 +78,16 @@ class ProductSerializer(serializers.ModelSerializer):
 
 class OrderDetailListSerializer(serializers.ListSerializer):
     def create(self, validated_data):
-        try:
-            o = Order()
-            o.user = self.context.get('user')
-            o.save()
-            ods = []
-            for item in validated_data:
-                print(item)
-                od = OrderDetail(**item)
-                od.product = Product.objects.get(item["product"])
-                od.order(o)
-                ods.append(od)
-            return OrderDetail.objects.bulk_create(ods)
-        except:
-            return None
-
+        o = Order()
+        o.user = self.context.get('user')
+        ods = []
+        o.save()
+        for item in validated_data:
+            od = OrderDetail(**item, order=o)
+            item["product"].quantity = item["product"].quantity - item["quantity"]
+            item["product"].save()
+            ods.append(od)
+        return OrderDetail.objects.bulk_create(ods)
 
 
 class OrderDetailSerializer(serializers.ModelSerializer):
@@ -104,6 +99,7 @@ class OrderDetailSerializer(serializers.ModelSerializer):
     # Dung context de lay Product Id va tao Order o ben View
     def create(self, validated_data):
         pass
+
 
 class ReviewSerializer(serializers.ModelSerializer):
     user = UserSerializer()
