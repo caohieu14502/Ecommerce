@@ -84,3 +84,11 @@ class Review(Interaction):
     store = models.ForeignKey(Store, on_delete=models.RESTRICT)
 
 
+class Cart(BaseModel):
+    user = models.OneToOneField(User, on_delete=models.RESTRICT)
+
+
+class CartDetail(BaseModel):
+    quantity = models.IntegerField()
+    cart = models.ForeignKey(Cart, on_delete=models.RESTRICT)
+    product = models.ForeignKey(Product, on_delete=models.RESTRICT)
